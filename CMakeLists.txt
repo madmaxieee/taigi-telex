@@ -35,5 +35,5 @@ add_custom_command(TARGET Toyimk POST_BUILD
 )
 
 install(TARGETS Toyimk
-    BUNDLE DESTINATION "/Library/Input Methods"
+    BUNDLE DESTINATION "$ENV{HOME}/Library/Input Methods"
 )

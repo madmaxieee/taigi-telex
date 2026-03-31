@@ -20,6 +20,9 @@ add_executable(Toyimk
     MACOSX_BUNDLE
     src/server.swift
     src/controller.swift
+    src/TelexTypes.swift
+    src/TelexRules.swift
+    src/TelexEngine.swift
 )
 
 set(APP_PATH "${CMAKE_CURRENT_BINARY_DIR}/Toyimk.app/Contents")

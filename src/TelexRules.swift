@@ -89,18 +89,13 @@ struct TelexRules {
     static func findTonePosition(_ syllable: String) -> Int {
         let lower = syllable.lowercased()
         
-        // Check for 'oo' - mark goes on first 'o'
-        if let range = lower.range(of: "oo") {
-            return syllable.distance(from: syllable.startIndex, to: range.lowerBound)
-        }
-        
-        // Check for 'iu' - mark goes on 'u'
+        // Check for 'iu' - mark goes on 'u' (exception to priority rule)
         if let range = lower.range(of: "iu") {
             let uIndex = lower.index(range.lowerBound, offsetBy: 1)
             return syllable.distance(from: syllable.startIndex, to: uIndex)
         }
         
-        // Check for 'ui' - mark goes on 'i'
+        // Check for 'ui' - mark goes on 'i' (exception to priority rule)
         if let range = lower.range(of: "ui") {
             let iIndex = lower.index(range.lowerBound, offsetBy: 1)
             return syllable.distance(from: syllable.startIndex, to: iIndex)
@@ -113,17 +108,22 @@ struct TelexRules {
             }
         }
         
-        // Syllabic consonants
-        if lower.hasSuffix("ng") {
+        // No regular vowels found - check for syllabic consonants
+        // Check for 'oo' - mark goes on first 'o'
+        if let range = lower.range(of: "oo") {
+            return syllable.distance(from: syllable.startIndex, to: range.lowerBound)
+        }
+        
+        // Check for 'ng' - only valid if no other vowels
+        if lower == "ng" {
             if let range = lower.range(of: "ng") {
                 return syllable.distance(from: syllable.startIndex, to: range.lowerBound)
             }
         }
         
-        if lower.hasSuffix("m") && lower.count == 1 {
-            if let range = lower.range(of: "m") {
-                return syllable.distance(from: syllable.startIndex, to: range.lowerBound)
-            }
+        // Check for standalone 'm' - only valid if it's just "m"
+        if lower == "m" {
+            return 0
         }
         
         // No vowel found

@@ -1,19 +1,58 @@
 import InputMethodKit
 
+@objc(ToyimkInputController)
 class ToyimkInputController: IMKInputController {
     private let engine = TelexEngine()
-    
-    override func inputText(_ string: String!, client sender: Any!) -> Bool {
-        NSLog("Input received: \(string.debugDescription)")
-        
-        guard let client = sender as? IMKTextInput,
-              let inputString = string,
-              let firstChar = inputString.first else {
+
+    @objc(handleEvent:client:)
+    override func handle(_ event: NSEvent!, client sender: Any!) -> Bool {
+        // Only handle key down events
+        guard event.type == .keyDown else {
             return false
         }
-        
+
+        guard let client = sender as? IMKTextInput else {
+            return false
+        }
+
+        // Handle backspace (keyCode 51)
+        if event.keyCode == 51 {
+            // Try to handle backspace in the engine
+            if let result = engine.backspace() {
+                switch result {
+                case .update(let display):
+                    if display.isEmpty {
+                        // Clear marked text
+                        client.setMarkedText(
+                            "",
+                            selectionRange: NSRange(location: 0, length: 0),
+                            replacementRange: NSRange(location: NSNotFound, length: NSNotFound)
+                        )
+                    } else {
+                        // Update marked text
+                        client.setMarkedText(
+                            display,
+                            selectionRange: NSRange(location: display.utf16.count, length: 0),
+                            replacementRange: NSRange(location: NSNotFound, length: NSNotFound)
+                        )
+                    }
+                    return true
+                default:
+                    return true
+                }
+            }
+            // Buffer is empty, let native handle the backspace
+            return false
+        }
+
+        // Handle character input
+        guard let characters = event.characters, let firstChar = characters.first else {
+            return false
+        }
+
+        // Process the character through the engine
         let result = engine.process(firstChar)
-        
+
         switch result {
         case .update(let display):
             // Show as marked text (underlined, in composition)
@@ -23,7 +62,7 @@ class ToyimkInputController: IMKInputController {
                 replacementRange: NSRange(location: NSNotFound, length: NSNotFound)
             )
             return true
-            
+
         case .commitAndPassthrough(let committedText, _):
             // Commit the transformed text
             client.insertText(
@@ -32,7 +71,7 @@ class ToyimkInputController: IMKInputController {
             )
             // Return false to let the system handle the passthrough character
             return false
-            
+
         case .commitRawAndProcess(let rawText, let newChar):
             // Escape: commit raw text without transformation
             client.insertText(
@@ -40,57 +79,18 @@ class ToyimkInputController: IMKInputController {
                 replacementRange: NSRange(location: NSNotFound, length: NSNotFound)
             )
             // Process the new character as fresh input
-            return inputText(String(newChar), client: sender)
+            return handle(
+                NSEvent.keyEvent(
+                    with: .keyDown, location: .zero, modifierFlags: [], timestamp: event.timestamp,
+                    windowNumber: event.windowNumber, context: nil, characters: String(newChar),
+                    charactersIgnoringModifiers: String(newChar), isARepeat: false, keyCode: 0),
+                client: sender)
         }
     }
-    
-    override func handle(_ event: NSEvent!, client sender: Any!) -> Bool {
-        // Only handle key down events
-        guard event.type == .keyDown else {
-            return super.handle(event, client: sender)
-        }
-        
-        // Handle backspace (keyCode 51)
-        guard event.keyCode == 51 else {
-            return super.handle(event, client: sender)
-        }
-        
-        guard let client = sender as? IMKTextInput else {
-            return false
-        }
-        
-        // Try to handle backspace in the engine
-        if let result = engine.backspace() {
-            switch result {
-            case .update(let display):
-                if display.isEmpty {
-                    // Clear marked text
-                    client.setMarkedText(
-                        "",
-                        selectionRange: NSRange(location: 0, length: 0),
-                        replacementRange: NSRange(location: NSNotFound, length: NSNotFound)
-                    )
-                } else {
-                    // Update marked text
-                    client.setMarkedText(
-                        display,
-                        selectionRange: NSRange(location: display.utf16.count, length: 0),
-                        replacementRange: NSRange(location: NSNotFound, length: NSNotFound)
-                    )
-                }
-                return true
-            default:
-                return true
-            }
-        }
-        
-        // Buffer is empty, let native handle the backspace
-        return false
-    }
-    
+
     override func commitComposition(_ sender: Any!) {
         guard let client = sender as? IMKTextInput else { return }
-        
+
         // Commit any pending composition
         if case .composing(let raw, _) = engine.state {
             let display = TelexRules.transform(raw)
@@ -100,10 +100,10 @@ class ToyimkInputController: IMKInputController {
             )
             engine.reset()
         }
-        
+
         super.commitComposition(sender)
     }
-    
+
     override func cancelComposition() {
         // Cancel composition - clear marked text without committing
         if let client = self.client() {
@@ -113,7 +113,7 @@ class ToyimkInputController: IMKInputController {
                 replacementRange: NSRange(location: NSNotFound, length: NSNotFound)
             )
         }
-        
+
         engine.reset()
         super.cancelComposition()
     }

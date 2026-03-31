@@ -65,14 +65,21 @@ struct TelexRules {
         // Find position to place tone mark
         let position = findTonePosition(syllable)
         
+        // Only apply tone if we found a valid vowel position
         guard position >= 0 && position < syllable.count else {
             return input
         }
         
-        // Insert combining mark after the target character
+        // Check if the character at position is actually a vowel
         let index = syllable.index(syllable.startIndex, offsetBy: position)
-        _ = syllable[index]  // Verify position is valid
+        let targetChar = syllable[index].lowercased()
+        let validVowels: Set<String> = ["a", "e", "i", "o", "u", "m", "n"]
+        guard validVowels.contains(targetChar) else {
+            // No valid vowel found, return input as-is (with tone key)
+            return input
+        }
         
+        // Insert combining mark after the target character
         var result = syllable
         result.insert(contentsOf: toneMark, at: syllable.index(after: index))
         
@@ -119,7 +126,7 @@ struct TelexRules {
             }
         }
         
-        // Default: last character
-        return max(0, syllable.count - 1)
+        // No vowel found
+        return -1
     }
 }

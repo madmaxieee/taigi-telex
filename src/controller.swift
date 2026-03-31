@@ -45,6 +45,24 @@ class ToyimkInputController: IMKInputController {
             return false
         }
 
+        // Handle Return key (keyCode 36) - commit if buffer not empty, otherwise pass through
+        if event.keyCode == 36 {
+            if !engine.isEmpty {
+                // Commit current composition
+                if case .composing(let raw, _) = engine.state {
+                    let display = TelexRules.transform(raw)
+                    client.insertText(
+                        display,
+                        replacementRange: NSRange(location: NSNotFound, length: NSNotFound)
+                    )
+                    engine.reset()
+                }
+                return true  // Consumed
+            }
+            // Buffer empty, pass through
+            return false
+        }
+
         // Handle character input
         guard let characters = event.characters, let firstChar = characters.first else {
             return false
@@ -79,6 +97,20 @@ class ToyimkInputController: IMKInputController {
                 replacementRange: NSRange(location: NSNotFound, length: NSNotFound)
             )
             // Process the new character as fresh input
+            return handle(
+                NSEvent.keyEvent(
+                    with: .keyDown, location: .zero, modifierFlags: [], timestamp: event.timestamp,
+                    windowNumber: event.windowNumber, context: nil, characters: String(newChar),
+                    charactersIgnoringModifiers: String(newChar), isARepeat: false, keyCode: 0),
+                client: sender)
+
+        case .commitAndProcess(let committedText, let newChar):
+            // Commit current syllable and process new char as fresh input
+            client.insertText(
+                committedText,
+                replacementRange: NSRange(location: NSNotFound, length: NSNotFound)
+            )
+            // Process the new character (hyphen) as fresh input
             return handle(
                 NSEvent.keyEvent(
                     with: .keyDown, location: .zero, modifierFlags: [], timestamp: event.timestamp,

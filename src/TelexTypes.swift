@@ -9,6 +9,7 @@ enum TelexResult {
     case update(display: String)
     case commitAndPassthrough(String, String)
     case commitRawAndProcess(String, Character)
+    case commitAndProcess(String, Character)  // Commit current, then process char as new input
 }
 
 struct TelexKeys {
@@ -30,12 +31,7 @@ struct TelexKeys {
         return char == hyphenKey || char == hyphenKeyUpper
     }
     
-    static func isCommitTrigger(_ char: Character) -> Bool {
-        if char == " " { return true }
-        if char == hyphenKey { return false }
-        if char == hyphenKeyUpper { return false }
-        // Punctuation marks that should trigger commit
-        let punctuation: Set<Character> = [".", ",", "?", "!", ";", ":", "'", "\"", "(", ")", "[", "]", "{", "}", "/", "\\", "<", ">"]
-        return punctuation.contains(char)
+    static func isLetter(_ char: Character) -> Bool {
+        return (char >= "a" && char <= "z") || (char >= "A" && char <= "Z")
     }
 }

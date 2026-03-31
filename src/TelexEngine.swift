@@ -14,8 +14,8 @@ class TelexEngine {
     }
     
     private func handleEmptyState(_ char: Character) -> TelexResult {
-        // Check if it's a commit trigger (can't commit if empty though)
-        if TelexKeys.isCommitTrigger(char) {
+        // Check if char is a letter - if not, pass through
+        if !TelexKeys.isLetter(char) {
             return .commitAndPassthrough("", String(char))
         }
         
@@ -45,14 +45,21 @@ class TelexEngine {
             return .commitRawAndProcess(rawToCommit, char)
         }
         
-        // Commit trigger (space, punctuation) = commit display + pass through
-        if TelexKeys.isCommitTrigger(char) {
+        // Hyphen key (f) = commit current and process f as new input
+        if TelexKeys.isHyphenKey(char) {
+            let display = TelexRules.transform(currentRaw)
+            state = .empty
+            return .commitAndProcess(display, char)
+        }
+        
+        // Check if char is a letter - if not, it's a commit trigger
+        if !TelexKeys.isLetter(char) {
             let display = TelexRules.transform(currentRaw)
             state = .empty
             return .commitAndPassthrough(display, String(char))
         }
         
-        // Continue composing
+        // Continue composing (char is a letter)
         let newRaw = currentRaw + String(char)
         let newDisplay = TelexRules.transform(newRaw)
         state = .composing(raw: newRaw, display: newDisplay)

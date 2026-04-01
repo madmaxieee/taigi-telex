@@ -130,6 +130,14 @@ class ToyimkInputController: IMKInputController {
                     windowNumber: event.windowNumber, context: nil, characters: String(newChar),
                     charactersIgnoringModifiers: String(newChar), isARepeat: false, keyCode: 0),
                 client: sender)
+
+        case .commit(let committedText):
+            // Commit raw text and consume the character (don't process it further)
+            client.insertText(
+                committedText,
+                replacementRange: NSRange(location: NSNotFound, length: NSNotFound)
+            )
+            return true
         }
     }
 

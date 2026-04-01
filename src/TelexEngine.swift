@@ -45,6 +45,15 @@ class TelexEngine {
             return .commitRawAndProcess(rawToCommit, char)
         }
         
+        // Same consonant key = escape (commit raw consonant, don't process char)
+        let endsWithConsonant = TelexKeys.isConsonantKey(currentRaw.last)
+        let isConsonantChar = TelexKeys.isConsonantKey(char)
+        if endsWithConsonant && isConsonantChar && currentRaw.last == char {
+            // Commit the raw consonant (currentRaw is just the single consonant key)
+            state = .empty
+            return .commit(currentRaw)
+        }
+        
         // Hyphen key (f) = commit current and process f as new input
         if TelexKeys.isHyphenKey(char) {
             let display = TelexRules.transform(currentRaw)

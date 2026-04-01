@@ -10,6 +10,7 @@ enum TelexResult {
     case commitAndPassthrough(String, String)
     case commitRawAndProcess(String, Character)
     case commitAndProcess(String, Character)  // Commit current, then process char as new input
+    case commit(String)  // Commit and consume the character (don't process it)
 }
 
 struct TelexKeys {
@@ -23,7 +24,8 @@ struct TelexKeys {
         return toneKeys.contains(char)
     }
     
-    static func isConsonantKey(_ char: Character) -> Bool {
+    static func isConsonantKey(_ char: Character?) -> Bool {
+        guard let char = char else { return false }
         return consonantKeys.contains(char)
     }
     

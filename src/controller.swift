@@ -15,6 +15,19 @@ class ToyimkInputController: IMKInputController {
             return false
         }
 
+        // Check for modifier keys - pass through if Command/Control/Option are pressed
+        let modifierFlags = event.modifierFlags
+        if modifierFlags.contains(.command) ||
+           modifierFlags.contains(.control) ||
+           modifierFlags.contains(.option) {
+            // If we have a composition in progress, commit it first
+            if !engine.isEmpty {
+                commitComposition(sender)
+            }
+            // Pass through to system (don't handle)
+            return false
+        }
+
         // Handle backspace (keyCode 51)
         if event.keyCode == 51 {
             // Try to handle backspace in the engine

@@ -8,4 +8,4 @@ install:
     cmake --install build
 
 reload: build install
-    pkill Toyimk || true
+    pkill TaigiTelex || true

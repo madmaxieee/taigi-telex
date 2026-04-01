@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.26)
 
-project(Toyimk LANGUAGES Swift)
+project(TaigiTelex LANGUAGES Swift)
 
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 
@@ -16,7 +16,7 @@ if(NOT ARCH STREQUAL "native")
     add_compile_options(-target "${ARCH}-apple-macos11")
 endif()
 
-add_executable(Toyimk
+add_executable(TaigiTelex
     MACOSX_BUNDLE
     src/server.swift
     src/controller.swift
@@ -25,18 +25,18 @@ add_executable(Toyimk
     src/TelexEngine.swift
 )
 
-set(APP_PATH "${CMAKE_CURRENT_BINARY_DIR}/Toyimk.app/Contents")
+set(APP_PATH "${CMAKE_CURRENT_BINARY_DIR}/TaigiTelex.app/Contents")
 
-add_custom_command(TARGET Toyimk POST_BUILD
+add_custom_command(TARGET TaigiTelex POST_BUILD
     COMMAND mkdir -p "${APP_PATH}/Resources"
-    COMMAND cp dmg/toyimk.icns "${APP_PATH}/Resources"
-    COMMAND cp dmg/toyimk-white.icns "${APP_PATH}/Resources"
+    COMMAND cp dmg/taigi-telex.icns "${APP_PATH}/Resources"
+    COMMAND cp dmg/taigi-telex-white.icns "${APP_PATH}/Resources"
     COMMAND cp -r dmg/en.lproj "${APP_PATH}/Resources"
-    COMMAND rm -f "${APP_PATH}/MacOS/Toyimk.d"
-    COMMAND "BUILD_DIR=${CMAKE_CURRENT_BINARY_DIR}" dmgbuild -s dmg/config.py Toyimk "${CMAKE_CURRENT_BINARY_DIR}/Toyimk.dmg"
+    COMMAND rm -f "${APP_PATH}/MacOS/TaigiTelex.d"
+    COMMAND "BUILD_DIR=${CMAKE_CURRENT_BINARY_DIR}" dmgbuild -s dmg/config.py TaigiTelex "${CMAKE_CURRENT_BINARY_DIR}/TaigiTelex.dmg"
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-install(TARGETS Toyimk
+install(TARGETS TaigiTelex
     BUNDLE DESTINATION "$ENV{HOME}/Library/Input Methods"
 )

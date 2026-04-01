@@ -1,7 +1,7 @@
 import InputMethodKit
 
-@objc(ToyimkInputController)
-class ToyimkInputController: IMKInputController {
+@objc(TaigiTelexInputController)
+class TaigiTelexInputController: IMKInputController {
     private let engine = TelexEngine()
 
     @objc(handleEvent:client:)
@@ -17,9 +17,9 @@ class ToyimkInputController: IMKInputController {
 
         // Check for modifier keys - pass through if Command/Control/Option are pressed
         let modifierFlags = event.modifierFlags
-        if modifierFlags.contains(.command) ||
-           modifierFlags.contains(.control) ||
-           modifierFlags.contains(.option) {
+        if modifierFlags.contains(.command) || modifierFlags.contains(.control)
+            || modifierFlags.contains(.option)
+        {
             // If we have a composition in progress, commit it first
             if !engine.isEmpty {
                 commitComposition(sender)

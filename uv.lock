@@ -88,7 +88,7 @@ wheels = [
 ]
 
 [[package]]
-name = "toyimk"
+name = "taigi-telex"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [

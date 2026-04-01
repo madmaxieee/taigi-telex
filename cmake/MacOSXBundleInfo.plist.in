@@ -3,15 +3,15 @@
 <plist version="1.0">
   <dict>
     <key>CFBundleIdentifier</key>
-    <string>com.liumeo.inputmethod.Toyimk</string>
+    <string>com.kahiok.inputmethod.TaigiTelex</string>
     <key>CFBundleIconFile</key>
-    <string>toyimk.icns</string>
+    <string>taigi-telex.icns</string>
     <key>NSPrincipalClass</key>
-    <string>Toyimk.NSManualApplication</string>
+    <string>TaigiTelex.NSManualApplication</string>
     <key>InputMethodConnectionName</key>
-    <string>com.liumeo.inputmethod.Toyimk_Connection</string>
+    <string>com.kahiok.inputmethod.TaigiTelex_Connection</string>
     <key>InputMethodServerControllerClass</key>
-    <string>Toyimk.ToyimkInputController</string>
+    <string>TaigiTelex.TaigiTelexInputController</string>
     <key>LSBackgroundOnly</key>
     <true />
     <key>TICapsLockLanguageSwitchCapable</key>
@@ -25,12 +25,12 @@
       <string>Latn</string>
     </array>
     <key>tsInputMethodIconFileKey</key>
-    <string>toyimk-white.icns</string>
+    <string>taigi-telex-white.icns</string>
     <key>ComponentInputModeDict</key>
     <dict>
       <key>tsInputModeListKey</key>
       <dict>
-        <key>com.liumeo.inputmethod.toy</key>
+        <key>com.kahiok.inputmethod.telex</key>
         <dict>
         </dict>
       </dict>

@@ -14,8 +14,12 @@
     <string>Toyimk.ToyimkInputController</string>
     <key>LSBackgroundOnly</key>
     <true />
+    <key>TICapsLockLanguageSwitchCapable</key>
+    <true />
+    <!-- pretend to be traditional chinese input method to get capslock switching to and from
+    english working -->
     <key>TISIntendedLanguage</key>
-    <string>nan</string>
+    <string>zh-Hant</string>
     <key>tsInputMethodCharacterRepertoireKey</key>
     <array>
       <string>Latn</string>

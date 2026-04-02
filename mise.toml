@@ -1,0 +1,49 @@
+[tools]
+# Build tools
+cmake = "latest"
+ninja = "latest"
+
+# Swift tooling
+swiftformat = "latest"
+
+# Python with uv
+python = "3.12"
+uv = "latest"
+
+[env]
+# Build configuration
+CMAKE_GENERATOR = "Ninja"
+ARCH = "arm64"
+CMAKE_BUILD_TYPE = "Release"
+
+[settings]
+python.uv_venv_auto = true
+
+[tasks.build]
+description = "Build the TaigiTelex input method"
+run = """
+cmake -B build -G Ninja -DARCH=arm64 -DCMAKE_BUILD_TYPE=Release -DCMAKE_EXPORT_COMPILE_COMMANDS=1
+cmake --build build
+"""
+
+[tasks.install]
+description = "Install TaigiTelex to ~/Library/Input Methods"
+depends = ["build"]
+run = "cmake --install build"
+
+[tasks.reload]
+description = "Build, install and reload TaigiTelex"
+depends = ["install"]
+run = "pkill TaigiTelex || true"
+
+[tasks.clean]
+description = "Clean build directory"
+run = "rm -rf build"
+
+[tasks.format]
+description = "Format Swift source files with swiftformat"
+run = "swiftformat src/"
+
+[prepare.uv]
+auto = true
+run = "uv sync --all-groups --all-extras"

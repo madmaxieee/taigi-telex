@@ -1,13 +1,13 @@
 import Foundation
 
-struct TelexRules {
+enum TelexRules {
     static let toneMarks: [Character: String] = [
-        "v": "\u{0301}",  // combining acute (2nd tone)
-        "y": "\u{0300}",  // combining grave (3rd tone)
-        "d": "\u{0302}",  // combining circumflex (5th tone)
-        "w": "\u{0304}",  // combining macron (7th tone)
-        "x": "\u{030D}",  // combining vertical line (8th tone)
-        "q": "\u{030B}",  // combining double acute (9th tone)
+        "v": "\u{0301}", // combining acute (2nd tone)
+        "y": "\u{0300}", // combining grave (3rd tone)
+        "d": "\u{0302}", // combining circumflex (5th tone)
+        "w": "\u{0304}", // combining macron (7th tone)
+        "x": "\u{030D}", // combining vertical line (8th tone)
+        "q": "\u{030B}", // combining double acute (9th tone)
         "V": "\u{0301}",
         "Y": "\u{0300}",
         "D": "\u{0302}",
@@ -15,31 +15,31 @@ struct TelexRules {
         "X": "\u{030D}",
         "Q": "\u{030B}",
     ]
-    
+
     static let consonantMap: [Character: String] = [
         "z": "ts",
         "Z": "Ts",
         "c": "tsh",
         "C": "Tsh",
     ]
-    
+
     static let vowelPriority = ["a", "e", "o", "u", "i"]
-    
+
     static func transform(_ input: String) -> String {
         var result = input
-        
+
         // Step 1: Apply consonant mappings (z→ts, c→tsh)
         result = applyConsonantMapping(result)
-        
+
         // Step 2: Apply hyphen mapping (f→-)
         result = applyHyphenMapping(result)
-        
+
         // Step 3: Apply tone mark if present at end
         result = applyToneMark(result)
-        
+
         return result
     }
-    
+
     private static func applyConsonantMapping(_ input: String) -> String {
         var result = input
         for (key, value) in consonantMap {
@@ -47,85 +47,86 @@ struct TelexRules {
         }
         return result
     }
-    
+
     private static func applyHyphenMapping(_ input: String) -> String {
         return input.replacingOccurrences(of: "f", with: "-")
-                     .replacingOccurrences(of: "F", with: "-")
+            .replacingOccurrences(of: "F", with: "-")
     }
-    
+
     private static func applyToneMark(_ input: String) -> String {
         guard let lastChar = input.last,
-              let toneMark = toneMarks[lastChar] else {
+              let toneMark = toneMarks[lastChar]
+        else {
             return input
         }
-        
+
         // Remove the tone key from the end
         let syllable = String(input.dropLast())
-        
+
         // Find position to place tone mark
         let position = findTonePosition(syllable)
-        
+
         // Only apply tone if we found a valid vowel position
         guard position >= 0 && position < syllable.count else {
             return input
         }
-        
+
         // Check if the character at position is actually a vowel
         let index = syllable.index(syllable.startIndex, offsetBy: position)
         let targetChar = syllable[index].lowercased()
-        let validVowels: Set<String> = ["a", "e", "i", "o", "u", "m", "n"]
+        let validVowels: Set = ["a", "e", "i", "o", "u", "m", "n"]
         guard validVowels.contains(targetChar) else {
             // No valid vowel found, return input as-is (with tone key)
             return input
         }
-        
+
         // Insert combining mark after the target character
         var result = syllable
         result.insert(contentsOf: toneMark, at: syllable.index(after: index))
-        
+
         return result
     }
-    
+
     static func findTonePosition(_ syllable: String) -> Int {
         let lower = syllable.lowercased()
-        
+
         // Check for 'iu' - mark goes on 'u' (exception to priority rule)
         if let range = lower.range(of: "iu") {
             let uIndex = lower.index(range.lowerBound, offsetBy: 1)
             return syllable.distance(from: syllable.startIndex, to: uIndex)
         }
-        
+
         // Check for 'ui' - mark goes on 'i' (exception to priority rule)
         if let range = lower.range(of: "ui") {
             let iIndex = lower.index(range.lowerBound, offsetBy: 1)
             return syllable.distance(from: syllable.startIndex, to: iIndex)
         }
-        
+
         // Priority order: a, e, o, u, i
         for vowel in vowelPriority {
             if let range = lower.range(of: vowel) {
                 return syllable.distance(from: syllable.startIndex, to: range.lowerBound)
             }
         }
-        
+
         // No regular vowels found - check for syllabic consonants
         // Check for 'oo' - mark goes on first 'o'
         if let range = lower.range(of: "oo") {
             return syllable.distance(from: syllable.startIndex, to: range.lowerBound)
         }
-        
+
         // Check for 'ng' - only valid if no other vowels
         if lower == "ng" {
             if let range = lower.range(of: "ng") {
                 return syllable.distance(from: syllable.startIndex, to: range.lowerBound)
             }
         }
-        
+
         // Check for standalone 'm' - only valid if it's just "m"
         if lower == "m" {
             return 0
         }
-        
+
         // No vowel found
         return -1
     }

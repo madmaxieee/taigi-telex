@@ -6,7 +6,6 @@ class TaigiTelexInputController: IMKInputController {
 
     @objc(handleEvent:client:)
     override func handle(_ event: NSEvent!, client sender: Any!) -> Bool {
-        // Only handle key down events
         guard event.type == .keyDown else {
             return false
         }
@@ -15,124 +14,136 @@ class TaigiTelexInputController: IMKInputController {
             return false
         }
 
-        // Check for modifier keys - pass through if Command/Control/Option are pressed
+        if shouldPassThroughModifierKeys(event, sender: sender) {
+            return false
+        }
+
+        if let result = handleSpecialKeys(event, client: client) {
+            return result
+        }
+
+        return handleCharacterInput(event, client: client, sender: sender)
+    }
+
+    private func shouldPassThroughModifierKeys(_ event: NSEvent, sender: Any!) -> Bool {
         let modifierFlags = event.modifierFlags
         if modifierFlags.contains(.command) || modifierFlags.contains(.control)
             || modifierFlags.contains(.option)
         {
-            // If we have a composition in progress, commit it first
             if !engine.isEmpty {
                 commitComposition(sender)
             }
-            // Pass through to system (don't handle)
-            return false
+            return true
         }
+        return false
+    }
 
-        // Handle backspace (keyCode 51)
+    private func handleSpecialKeys(_ event: NSEvent, client: IMKTextInput) -> Bool? {
         if event.keyCode == 51 {
-            // Try to handle backspace in the engine
-            if let result = engine.backspace() {
-                switch result {
-                case .update(let display):
-                    if display.isEmpty {
-                        // Clear marked text
-                        client.setMarkedText(
-                            "",
-                            selectionRange: NSRange(location: 0, length: 0),
-                            replacementRange: NSRange(location: NSNotFound, length: NSNotFound)
-                        )
-                    } else {
-                        // Update marked text
-                        client.setMarkedText(
-                            display,
-                            selectionRange: NSRange(location: display.utf16.count, length: 0),
-                            replacementRange: NSRange(location: NSNotFound, length: NSNotFound)
-                        )
-                    }
-                    return true
-                default:
-                    return true
-                }
-            }
-            // Buffer is empty, let native handle the backspace
-            return false
+            return handleBackspace(client: client)
         }
 
-        // Handle Return key (keyCode 36) - commit if buffer not empty, otherwise pass through
         if event.keyCode == 36 {
-            if !engine.isEmpty {
-                // Commit current composition
-                if case .composing(let raw, _) = engine.state {
-                    let display = TelexRules.transform(raw)
-                    client.insertText(
-                        display,
-                        replacementRange: NSRange(location: NSNotFound, length: NSNotFound)
-                    )
-                    engine.reset()
-                }
-                return true  // Consumed
-            }
-            // Buffer empty, pass through
-            return false
+            return handleReturn(client: client)
         }
 
-        // Handle character input
-        guard let characters = event.characters, let firstChar = characters.first else {
+        return nil
+    }
+
+    private func handleBackspace(client: IMKTextInput) -> Bool {
+        guard let result = engine.backspace() else {
             return false
         }
-
-        // Process the character through the engine
-        let result = engine.process(firstChar)
 
         switch result {
-        case .update(let display):
-            // Show as marked text (underlined, in composition)
+        case let .update(display):
+            updateMarkedText(display, client: client)
+            return true
+        default:
+            return true
+        }
+    }
+
+    private func updateMarkedText(_ display: String, client: IMKTextInput) {
+        if display.isEmpty {
+            client.setMarkedText(
+                "",
+                selectionRange: NSRange(location: 0, length: 0),
+                replacementRange: NSRange(location: NSNotFound, length: NSNotFound)
+            )
+        } else {
             client.setMarkedText(
                 display,
                 selectionRange: NSRange(location: display.utf16.count, length: 0),
                 replacementRange: NSRange(location: NSNotFound, length: NSNotFound)
             )
+        }
+    }
+
+    private func handleReturn(client: IMKTextInput) -> Bool {
+        guard !engine.isEmpty else {
+            return false
+        }
+
+        if case let .composing(raw, _) = engine.state {
+            let display = TelexRules.transform(raw)
+            client.insertText(
+                display,
+                replacementRange: NSRange(location: NSNotFound, length: NSNotFound)
+            )
+            engine.reset()
+        }
+        return true
+    }
+
+    private func handleCharacterInput(_ event: NSEvent, client: IMKTextInput, sender: Any!) -> Bool {
+        guard let characters = event.characters, let firstChar = characters.first else {
+            return false
+        }
+
+        let result = engine.process(firstChar)
+        return processEngineResult(result, event: event, client: client, sender: sender)
+    }
+
+    private func processEngineResult(
+        _ result: TelexResult,
+        event: NSEvent,
+        client: IMKTextInput,
+        sender: Any!
+    ) -> Bool {
+        switch result {
+        case let .update(display):
+            updateMarkedText(display, client: client)
             return true
 
-        case .commitAndPassthrough(let committedText, _):
-            // Commit the transformed text
+        case let .commitAndPassthrough(committedText, _):
             client.insertText(
                 committedText,
                 replacementRange: NSRange(location: NSNotFound, length: NSNotFound)
             )
-            // Return false to let the system handle the passthrough character
             return false
 
-        case .commitRawAndProcess(let rawText, let newChar):
-            // Escape: commit raw text without transformation
+        case let .commitRawAndProcess(rawText, newChar):
             client.insertText(
                 rawText,
                 replacementRange: NSRange(location: NSNotFound, length: NSNotFound)
             )
-            // Process the new character as fresh input
             return handle(
-                NSEvent.keyEvent(
-                    with: .keyDown, location: .zero, modifierFlags: [], timestamp: event.timestamp,
-                    windowNumber: event.windowNumber, context: nil, characters: String(newChar),
-                    charactersIgnoringModifiers: String(newChar), isARepeat: false, keyCode: 0),
-                client: sender)
+                createKeyEvent(event, char: newChar),
+                client: sender
+            )
 
-        case .commitAndProcess(let committedText, let newChar):
-            // Commit current syllable and process new char as fresh input
+        case let .commitAndProcess(committedText, newChar):
             client.insertText(
                 committedText,
                 replacementRange: NSRange(location: NSNotFound, length: NSNotFound)
             )
-            // Process the new character (hyphen) as fresh input
             return handle(
-                NSEvent.keyEvent(
-                    with: .keyDown, location: .zero, modifierFlags: [], timestamp: event.timestamp,
-                    windowNumber: event.windowNumber, context: nil, characters: String(newChar),
-                    charactersIgnoringModifiers: String(newChar), isARepeat: false, keyCode: 0),
-                client: sender)
+                createKeyEvent(event, char: newChar),
+                client: sender
+            )
 
-        case .commit(let committedText):
-            // Commit raw text and consume the character (don't process it further)
+        case let .commit(committedText):
             client.insertText(
                 committedText,
                 replacementRange: NSRange(location: NSNotFound, length: NSNotFound)
@@ -141,11 +152,25 @@ class TaigiTelexInputController: IMKInputController {
         }
     }
 
+    private func createKeyEvent(_ event: NSEvent, char: Character) -> NSEvent? {
+        NSEvent.keyEvent(
+            with: .keyDown,
+            location: .zero,
+            modifierFlags: [],
+            timestamp: event.timestamp,
+            windowNumber: event.windowNumber,
+            context: nil,
+            characters: String(char),
+            charactersIgnoringModifiers: String(char),
+            isARepeat: false,
+            keyCode: 0
+        )
+    }
+
     override func commitComposition(_ sender: Any!) {
         guard let client = sender as? IMKTextInput else { return }
 
-        // Commit any pending composition
-        if case .composing(let raw, _) = engine.state {
+        if case let .composing(raw, _) = engine.state {
             let display = TelexRules.transform(raw)
             client.insertText(
                 display,
@@ -158,8 +183,7 @@ class TaigiTelexInputController: IMKInputController {
     }
 
     override func cancelComposition() {
-        // Cancel composition - clear marked text without committing
-        if let client = self.client() {
+        if let client = client() {
             client.setMarkedText(
                 "",
                 selectionRange: NSRange(location: 0, length: 0),

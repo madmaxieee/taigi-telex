@@ -9,3 +9,6 @@ install:
 
 reload: build install
     pkill TaigiTelex || true
+
+clean:
+    rm -rf build

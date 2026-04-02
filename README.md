@@ -3,8 +3,10 @@
 ## Install dependencies
 
 ```sh
-brew install swiftlint ninja
+brew install cmake ninja
 pip install "dmgbuild[badge_icons]"
+# or if you use mise
+mise i
 ```
 
 ## Build
@@ -30,11 +32,5 @@ cmake --install build
 mise run install
 ```
 
-- On first time installation,
-  logout your account and login,
-  then in `System Settings` -> `Keyboard` -> `Input Sources`,
-  add `taigi-telex` from `Min nan Chinese`.
-- On further installations,
-  switch to another input method,
-  `pkill TaigiTelex`,
-  then switch back.
+- On first time installation, logout and log back in, then in `System Settings` -> `Keyboard` -> `Input Sources` (Edit), add `taigi-telex` from `Chinese, Traditional`.
+- On further installations, switch to another input method, `pkill TaigiTelex`, then switch back.

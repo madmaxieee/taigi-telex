@@ -1,9 +1,4 @@
-# Toyimk
-
-A demo input method for macOS based on Swift and CMake,
-forked from [ensan-hcl/macOS_IMKitSample_2021](https://github.com/ensan-hcl/macOS_IMKitSample_2021).
-
-This project is for developers who don't like deprecated Objective-C and ugly `.xcodeproj`.
+# taigi-telex
 
 ## Install dependencies
 
@@ -19,39 +14,27 @@ cmake -B build -G Ninja \
   -DARCH=arm64 \
   -DCMAKE_BUILD_TYPE=Release
 cmake --build build
+# or if you use mise
+mise run build
 ```
 
 ## Install
 
-Either open `build/Toyimk.dmg`
-(if prompted Toyimk is in use error,
-execute `pkill Toyimk` and retry), or
+Either open `build/TaigiTelex.dmg`
+(if prompted taigi-telex is in use error,
+execute `pkill TaigiTelex` and retry), or
 
 ```sh
 cmake --install build
+# or if you use just
+mise run install
 ```
 
 - On first time installation,
   logout your account and login,
   then in `System Settings` -> `Keyboard` -> `Input Sources`,
-  add `Toyimk` from `English`.
+  add `taigi-telex` from `Min nan Chinese`.
 - On further installations,
   switch to another input method,
-  `pkill Toyimk`,
+  `pkill TaigiTelex`,
   then switch back.
-- You may change what is committed at `client.insert` in [controller.swift](src/controller.swift) to make sure your changes take effect.
-
-## Debug
-
-Yes, though being a system module, input method is debuggable.
-However, you need another machine to do it.
-
-```sh
-$ ssh your-mac
-$ /usr/bin/lldb
-(lldb) process attach --name Toyimk
-(lldb) b inputText
-(lldb) c
-```
-
-Now switch to Toyimk and hit a key.

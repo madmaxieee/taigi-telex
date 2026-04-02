@@ -32,9 +32,9 @@
           <key>tsInputModeIsVisibleKey</key>
           <true />
           <key>tsInputModeMenuIconFileKey</key>
-          <string>taigi-telex.icns</string>
+          <string>TW-input-menu.tiff</string>
           <key>tsInputModePaletteIconFileKey</key>
-          <string>taigi-telex.icns</string>
+          <string>TW-input-menu.tiff</string>
         </dict>
       </dict>
     </dict>
@@ -43,6 +43,6 @@
       <string>Latn</string>
     </array>
     <key>tsInputMethodIconFileKey</key>
-    <string>taigi-telex.icns</string>
+    <string>TW-preference.tiff</string>
   </dict>
 </plist>

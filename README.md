@@ -1,12 +1,14 @@
-# taigi-telex
+# Tâi-gí Telex
+
+Tâi-gí Telex is a Taiwanese Tâi-lô input method with Telex-style tone keys for macOS.
+
+**Live Demo:** https://telex.kahiok.com
 
 ## User Guide
 
-Taigi Telex is a Taiwanese Hokkien input method using the Telex romanization scheme.
-
 ### Download
 
-TODO: Add Github release link here
+[Download Latest](https://github.com/madmaxieee/taigi-telex/releases/tag/latest)
 
 ### Basic Rules
 
@@ -14,10 +16,10 @@ Type letters normally. Special keys modify the output:
 
 | Key | Output | Usage                         |
 | --- | ------ | ----------------------------- |
-| `z` | `ts`   | Use `z` to type `ts`          |
-| `Z` | `Ts`   | Capital `Z` for capital `Ts`  |
-| `c` | `tsh`  | Use `c` to type `tsh`         |
-| `C` | `Tsh`  | Capital `C` for capital `Tsh` |
+| `c` | `ts`   | Use `c` to type `ts`          |
+| `C` | `Ts`   | Capital `C` for capital `Ts`  |
+| `z` | `tsh`  | Use `z` to type `tsh`         |
+| `Z` | `Tsh`  | Capital `Z` for capital `Tsh` |
 | `f` | `-`    | Use `f` to type a hyphen      |
 
 ### Tone Marks
@@ -45,7 +47,7 @@ Add tone marks by typing the corresponding key at the end of a syllable:
 | `cang` + `q`         | `tsa̋ng`  | Ninth tone (and consonant replacement) |
 | `c`                  | `ts`     | Consonant replacement (s)              |
 | `z`                  | `tsh`    | Consonant replacement (z)              |
-| `taid` + `f` + `giv` | `tâi-gí` | Hyphen short hand (f)                  |
+| `taid` + `f` + `giv` | `tâi-gí` | Hyphen shorthand (f)                   |
 
 ### Tone Mark Placement
 
@@ -63,6 +65,7 @@ Tone marks are automatically placed on the correct vowel:
 - Press the **same consonant key twice** to type it literally (e.g., `zz` → `z`, `cc` → `c`)
 - Non-letter characters (space, comma, period, numbers) automatically commit the current composition
 - Press return key to commit current buffer
+- Caps lock to switch between Tâi-gí Telex and English works, like any Chinese input method
 
 ## Contribution Guide
 
@@ -88,15 +91,18 @@ mise run build
 
 ### Install
 
-Either open `build/TaigiTelex.dmg`
-(if prompted taigi-telex is in use error,
-execute `pkill TaigiTelex` and retry), or
+Either open `build/TaigiTelex.dmg` (if prompted with a "TaigiTelex is in use" error, execute `pkill TaigiTelex` and retry), or
 
 ```sh
 cmake --install build
-# or if you use just
+# or if you use mise
 mise run install
 ```
 
-- On first time installation, logout and log back in, then in `System Settings` -> `Keyboard` -> `Input Sources` (Edit), add `taigi-telex` from `Chinese, Traditional`.
+- On first time installation, log out and log back in, then in `System Settings` -> `Keyboard` -> `Input Sources` (Edit), add `taigi-telex` from `Chinese, Traditional`.
 - On further installations, switch to another input method, `pkill TaigiTelex`, then switch back.
+
+## Acknowledgement
+
+- [toyimk](https://github.com/eagleoflqj/toyimk) Thanks toyimk for the build system setup
+- [macSKK](https://github.com/mtgto/macSKK) Thanks macSKK for architecture reference

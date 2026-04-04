@@ -14,8 +14,6 @@
     <string>TaigiTelex.TaigiTelexInputController</string>
     <key>LSBackgroundOnly</key>
     <true />
-    <key>TISInputSourceID</key>
-    <string>com.kahiok.inputmethod.TaigiTelex</string>
     <key>TICapsLockLanguageSwitchCapable</key>
     <true />
     <!-- pretend to be Chinese input method to get capslock switching to and from english working -->
@@ -27,6 +25,10 @@
       <dict>
         <key>com.kahiok.inputmethod.TaigiTelexTL</key>
         <dict>
+          <key>TISInputSourceID</key>
+          <string>com.kahiok.inputmethod.TaigiTelexTL</string>
+          <key>TISIntendedLanguage</key>
+          <string>zh-Hant</string>
           <key>TISDoubleSpaceSubstitution</key>
           <string>. </string>
           <key>tsInputModeIsVisibleKey</key>
@@ -36,7 +38,27 @@
           <key>tsInputModePaletteIconFileKey</key>
           <string>TW-input-menu.tiff</string>
         </dict>
+        <key>com.kahiok.inputmethod.TaigiTelexPOJ</key>
+        <dict>
+          <key>TISInputSourceID</key>
+          <string>com.kahiok.inputmethod.TaigiTelexPOJ</string>
+          <key>TISIntendedLanguage</key>
+          <string>zh-Hant</string>
+          <key>TISDoubleSpaceSubstitution</key>
+          <string>. </string>
+          <key>tsInputModeIsVisibleKey</key>
+          <true />
+          <key>tsInputModeMenuIconFileKey</key>
+          <string>POJ-input-menu.tiff</string>
+          <key>tsInputModePaletteIconFileKey</key>
+          <string>POJ-input-menu.tiff</string>
+        </dict>
       </dict>
+      <key>tsVisibleInputModeOrderedArrayKey</key>
+      <array>
+        <string>com.kahiok.inputmethod.TaigiTelexTL</string>
+        <string>com.kahiok.inputmethod.TaigiTelexPOJ</string>
+      </array>
     </dict>
     <key>tsInputMethodCharacterRepertoireKey</key>
     <array>

@@ -29,6 +29,7 @@ set(APP_PATH "${CMAKE_CURRENT_BINARY_DIR}/TaigiTelex.app/Contents")
 
 add_custom_command(TARGET TaigiTelex POST_BUILD
     COMMAND mkdir -p "${APP_PATH}/Resources"
+    COMMAND cp dmg/POJ-input-menu.tiff "${APP_PATH}/Resources"
     COMMAND cp dmg/TW-input-menu.tiff "${APP_PATH}/Resources"
     COMMAND cp dmg/TW-preference.tiff "${APP_PATH}/Resources"
     COMMAND cp dmg/taigi-telex.icns "${APP_PATH}/Resources"

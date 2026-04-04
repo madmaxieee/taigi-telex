@@ -82,12 +82,10 @@ enum TelexRules {
     // MARK: - Consonant Mapping
 
     private static func applyConsonantMapping(_ input: String, mode: InputMode) -> String {
-        var result = input
         let consonantMap = mode == .tl ? consonantMapTL : consonantMapPOJ
-        for (key, value) in consonantMap {
-            result = result.replacingOccurrences(of: String(key), with: value)
-        }
-        return result
+        return input.map { char in
+            consonantMap[char] ?? String(char)
+        }.joined()
     }
 
     // MARK: - Hyphen Mapping

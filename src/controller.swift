@@ -2,7 +2,45 @@ import InputMethodKit
 
 @objc(TaigiTelexInputController)
 class TaigiTelexInputController: IMKInputController {
-    private let engine = TelexEngine()
+    private var engine: TelexEngine
+
+    override init!(server: IMKServer!, delegate: Any!, client inputClient: Any!) {
+        NSLog("[TaigiTelex] InputController init called")
+        // Default to TL mode initially - system will call setValue with actual mode
+        engine = TelexEngine(inputMode: .tl)
+        NSLog("[TaigiTelex] Engine created with default mode: \(engine.inputMode)")
+        super.init(server: server, delegate: delegate, client: inputClient)
+        NSLog("[TaigiTelex] InputController init complete")
+    }
+
+    /// Called by the system when input mode changes
+    override func setValue(_ value: Any!, forTag _: Int, client sender: Any!) {
+        guard let modeId = value as? String else {
+            return
+        }
+
+        guard let newMode = InputMode(rawValue: modeId) else {
+            NSLog("[TaigiTelex] ERROR: Unknown mode ID: \(modeId)")
+            NSLog("[TaigiTelex] Valid modes: tl='\(InputMode.tl.rawValue)', poj='\(InputMode.poj.rawValue)'")
+            return
+        }
+
+        // Only update if mode actually changed
+        if engine.inputMode != newMode {
+            NSLog("[TaigiTelex] Mode changing from \(engine.inputMode) to \(newMode)")
+
+            // Commit any pending composition before switching
+            if !engine.isEmpty {
+                commitComposition(sender)
+            }
+
+            // Create new engine with new mode
+            engine = TelexEngine(inputMode: newMode)
+            NSLog("[TaigiTelex] Engine recreated with new mode: \(engine.inputMode)")
+        } else {
+            NSLog("[TaigiTelex] Mode unchanged: \(newMode)")
+        }
+    }
 
     @objc(handleEvent:client:)
     override func handle(_ event: NSEvent!, client sender: Any!) -> Bool {
@@ -86,7 +124,7 @@ class TaigiTelexInputController: IMKInputController {
         }
 
         if case let .composing(raw, _) = engine.state {
-            let display = TelexRules.transform(raw)
+            let display = TelexRules.transform(raw, mode: engine.inputMode)
             client.insertText(
                 display,
                 replacementRange: NSRange(location: NSNotFound, length: NSNotFound)
@@ -171,7 +209,7 @@ class TaigiTelexInputController: IMKInputController {
         guard let client = sender as? IMKTextInput else { return }
 
         if case let .composing(raw, _) = engine.state {
-            let display = TelexRules.transform(raw)
+            let display = TelexRules.transform(raw, mode: engine.inputMode)
             client.insertText(
                 display,
                 replacementRange: NSRange(location: NSNotFound, length: NSNotFound)

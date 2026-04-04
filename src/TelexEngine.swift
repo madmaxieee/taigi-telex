@@ -1,7 +1,14 @@
 import Foundation
 
 class TelexEngine {
+    let inputMode: InputMode
     private(set) var state: TelexState = .empty
+
+    init(inputMode: InputMode) {
+        NSLog("[TaigiTelex] TelexEngine init with mode: \(inputMode)")
+        self.inputMode = inputMode
+        NSLog("[TaigiTelex] TelexEngine inputMode set to: \(self.inputMode)")
+    }
 
     func process(_ char: Character) -> TelexResult {
         switch state {
@@ -21,7 +28,7 @@ class TelexEngine {
 
         // Start composing
         let raw = String(char)
-        let display = TelexRules.transform(raw)
+        let display = TelexRules.transform(raw, mode: inputMode)
         state = .composing(raw: raw, display: display)
         return .update(display: display)
     }
@@ -33,7 +40,7 @@ class TelexEngine {
         // Different tone key = override the tone
         if endsWithTone && isToneChar && currentRaw.last != char {
             let newRaw = String(currentRaw.dropLast()) + String(char)
-            let newDisplay = TelexRules.transform(newRaw)
+            let newDisplay = TelexRules.transform(newRaw, mode: inputMode)
             state = .composing(raw: newRaw, display: newDisplay)
             return .update(display: newDisplay)
         }
@@ -46,31 +53,39 @@ class TelexEngine {
         }
 
         // Same consonant key = escape (commit raw consonant, don't process char)
-        let endsWithConsonant = TelexKeys.isConsonantKey(currentRaw.last)
-        let isConsonantChar = TelexKeys.isConsonantKey(char)
-        if endsWithConsonant && isConsonantChar && currentRaw.last == char {
-            // Commit the raw consonant (currentRaw is just the single consonant key)
+        if TelexRules.isConsonantEscape(currentRaw, char: char, mode: inputMode) {
             state = .empty
             return .commit(currentRaw)
         }
 
+        // POJ: Triple vowel key = escape (commit double vowel as escaped, process char)
+        if inputMode == .poj {
+            if TelexRules.isDoubleVowelEscape(currentRaw, char: char, mode: inputMode) {
+                // Commit the first two (which will be transformed to nn or oo)
+                let escapedRaw = String(currentRaw.dropLast())
+                let display = TelexRules.transform(escapedRaw, mode: inputMode)
+                state = .empty
+                return .commitAndProcess(display, char)
+            }
+        }
+
         // Hyphen key (f) = commit current and process f as new input
         if TelexKeys.isHyphenKey(char) {
-            let display = TelexRules.transform(currentRaw)
+            let display = TelexRules.transform(currentRaw, mode: inputMode)
             state = .empty
             return .commitAndProcess(display, char)
         }
 
         // Check if char is a letter - if not, it's a commit trigger
         if !TelexKeys.isLetter(char) {
-            let display = TelexRules.transform(currentRaw)
+            let display = TelexRules.transform(currentRaw, mode: inputMode)
             state = .empty
             return .commitAndPassthrough(display, String(char))
         }
 
         // Continue composing (char is a letter)
         let newRaw = currentRaw + String(char)
-        let newDisplay = TelexRules.transform(newRaw)
+        let newDisplay = TelexRules.transform(newRaw, mode: inputMode)
         state = .composing(raw: newRaw, display: newDisplay)
         return .update(display: newDisplay)
     }
@@ -90,7 +105,7 @@ class TelexEngine {
 
             // Remove last character
             let newRaw = String(raw.dropLast())
-            let newDisplay = TelexRules.transform(newRaw)
+            let newDisplay = TelexRules.transform(newRaw, mode: inputMode)
             state = .composing(raw: newRaw, display: newDisplay)
             return .update(display: newDisplay)
         }

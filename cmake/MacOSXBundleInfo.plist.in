@@ -4,6 +4,8 @@
   <dict>
     <key>CFBundleIdentifier</key>
     <string>com.kahiok.inputmethod.TaigiTelex</string>
+    <key>CFBundleIconFile</key>
+    <string>taigi-telex.icns</string>
     <key>CFBundleName</key>
     <string>TaigiTelex</string>
     <key>NSPrincipalClass</key>

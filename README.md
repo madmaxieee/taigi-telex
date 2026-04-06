@@ -35,6 +35,7 @@ This package is not signed with an Apple Developer certificate. On first install
 4. Confirm when prompted
 
 After installation:
+
 - Go to **System Settings** → **Keyboard** → **Input Sources** (Edit)
 - Click the **+** button and select **Tâi-gí Telex** from **Chinese, Traditional**
 - If the input method doesn't appear, log out and log back in
@@ -97,18 +98,17 @@ Add tone marks by typing the corresponding key at the end of a syllable (same in
 
 #### POJ Mode
 
-| Input               | Output   | Notes                         |
-| ------------------- | -------- | ----------------------------- |
-| `cheng` + `v`       | `chhéng` | Second tone (consonant: chh)  |
-| `choan` + `y`       | `chhòan` | Third tone                    |
-| `cheng` + `d`       | `chêng`  | Fifth tone (consonant: ch)    |
-| `chng` + `w`        | `chnḡ`   | Seventh tone on syllabic ng   |
-| `sio` + `x`         | `sio̍h`   | Eighth tone                   |
-| `onn` + `y`         | `òⁿ`     | Nasal vowel with tone         |
-| `poo` + `d`         | `pô͘`     | POJ oo vowel with tone        |
-| `ann`               | `aⁿ`     | Nasalization (nn → ⁿ)         |
-| `onnf` + `ji` + `v` | `òⁿ-jí`  | Hyphen with nasal vowel       |
-| `annn`              | `ann`    | Escape: triple n → literal nn |
+| Input                | Output   | Notes                                     |
+| -------------------- | -------- | ----------------------------------------- |
+| `hoo` + `v`          | `hó͘`     | Second tone (with long o vowel)           |
+| `pa` + `y`           | `pà`     | Third tone                                |
+| `kau` + `d`          | `kâu`    | Fifth tone                                |
+| `ciunn` + `w`        | `chhiūⁿ` | Seventh tone (with consonant replacement) |
+| `lok` + `x`          | `lo̍k`    | Eighth tone                               |
+| `sann`               | `saⁿ`    | Nasalization (nn → ⁿ)                     |
+| `c`                  | `ch`     | Consonant replacement                     |
+| `z`                  | `chh`    | Consonant replacement                     |
+| `taid` + `f` + `giv` | `tâi-gí` | Hyphen shorthand (f)                      |
 
 ### Tone Mark Placement
 

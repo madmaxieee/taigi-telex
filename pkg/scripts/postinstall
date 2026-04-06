@@ -1,0 +1,5 @@
+#!/bin/bash -eu
+asns=$(/usr/bin/lsappinfo find bundleID=com.kahiok.inputmethod.TaigiTelex)
+if [[ "$asns" = ASN* ]]; then
+  /usr/bin/osascript -e 'tell application id "com.kahiok.inputmethod.TaigiTelex" to quit'
+fi

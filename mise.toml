@@ -44,6 +44,18 @@ run = "rm -rf build"
 description = "Format Swift source files with swiftformat"
 run = "swiftformat src/"
 
+[tasks.package]
+description = "Build and package TaigiTelex as PKG+DMG (default)"
+run = "scripts/build_pkg.sh"
+
+[tasks.package-only]
+description = "Package existing build without rebuilding"
+run = "scripts/build_pkg.sh --pkg-only"
+
+[tasks.package-no-dmg]
+description = "Build and package as PKG only (no DMG)"
+run = "scripts/build_pkg.sh --no-dmg"
+
 [prepare.uv]
 auto = true
 run = "uv sync --all-groups --all-extras"

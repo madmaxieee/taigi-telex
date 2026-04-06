@@ -35,7 +35,6 @@ add_custom_command(TARGET TaigiTelex POST_BUILD
     COMMAND cp dmg/taigi-telex.icns "${APP_PATH}/Resources"
     COMMAND cp -r dmg/en.lproj "${APP_PATH}/Resources"
     COMMAND rm -f "${APP_PATH}/MacOS/TaigiTelex.d"
-    COMMAND "BUILD_DIR=${CMAKE_CURRENT_BINARY_DIR}" dmgbuild -s dmg/config.py TaigiTelex "${CMAKE_CURRENT_BINARY_DIR}/TaigiTelex.dmg"
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
 

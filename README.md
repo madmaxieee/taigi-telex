@@ -21,6 +21,22 @@ Both modes share the same tone marking keys. The main differences are in consona
 
 [Download Latest](https://github.com/madmaxieee/taigi-telex/releases/tag/latest)
 
+**Important:**
+
+Due to macOS security settings, drag and drop install may not work.
+
+1. If you have already opened the DMG, eject it
+1. Open Terminal (Applications > Utilities > Terminal)
+1. Copy and paste this command, then press Enter:
+
+   ```sh
+   xattr -cr ~/Downloads/TaigiTelex-arm64.dmg
+   ```
+
+1. Now you can double-click the DMG file to open it normally
+
+After opening the DMG, drag the app to your Applications folder to install.
+
 ### Basic Rules
 
 Type letters normally. Special keys modify the output:

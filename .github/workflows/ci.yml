@@ -20,28 +20,11 @@ jobs:
 
       - name: Install dependencies
         run: |
-          brew install ninja
-          pip install "dmgbuild[badge_icons]"
+          brew install ninja cmake
 
-      - name: Build for Intel
+      - name: Build universal PKG
         run: |
-          cmake -B build-x86_64 -G Ninja \
-            -DARCH=x86_64 \
-            -DCMAKE_BUILD_TYPE=Release
-          cmake --build build-x86_64
-
-      - name: Build for Apple Silicon
-        run: |
-          cmake -B build-arm64 -G Ninja \
-            -DARCH=arm64 \
-            -DCMAKE_BUILD_TYPE=Release
-          cmake --build build-arm64
-
-      - name: Rename dmg for release
-        if: ${{ github.ref == 'refs/heads/main' }}
-        run: |
-          mv build-x86_64/TaigiTelex.dmg TaigiTelex-x86_64.dmg
-          mv build-arm64/TaigiTelex.dmg TaigiTelex-arm64.dmg
+          scripts/build_pkg.sh --universal
 
       - name: Release
         if: ${{ github.ref == 'refs/heads/main' }}
@@ -52,5 +35,4 @@ jobs:
           prerelease: true
           title: "Nightly Build"
           files: |
-            TaigiTelex-x86_64.dmg
-            TaigiTelex-arm64.dmg
+            build/TaigiTelex-*.pkg

@@ -39,4 +39,4 @@ run = "swiftformat src/"
 
 [tasks.package]
 description = "Build and package TaigiTelex as PKG"
-run = "scripts/build_pkg.sh"
+run = "scripts/build_pkg.sh --universal"

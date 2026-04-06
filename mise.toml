@@ -6,18 +6,11 @@ ninja = "latest"
 # Swift tooling
 swiftformat = "latest"
 
-# Python with uv
-python = "3.12"
-uv = "latest"
-
 [env]
 # Build configuration
 CMAKE_GENERATOR = "Ninja"
 ARCH = "arm64"
 CMAKE_BUILD_TYPE = "Release"
-
-[settings]
-python.uv_venv_auto = true
 
 [tasks.build]
 description = "Build the TaigiTelex input method"
@@ -45,17 +38,5 @@ description = "Format Swift source files with swiftformat"
 run = "swiftformat src/"
 
 [tasks.package]
-description = "Build and package TaigiTelex as PKG+DMG (default)"
+description = "Build and package TaigiTelex as PKG"
 run = "scripts/build_pkg.sh"
-
-[tasks.package-only]
-description = "Package existing build without rebuilding"
-run = "scripts/build_pkg.sh --pkg-only"
-
-[tasks.package-no-dmg]
-description = "Build and package as PKG only (no DMG)"
-run = "scripts/build_pkg.sh --no-dmg"
-
-[prepare.uv]
-auto = true
-run = "uv sync --all-groups --all-extras"

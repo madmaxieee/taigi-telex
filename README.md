@@ -17,25 +17,27 @@ Both modes share the same tone marking keys. The main differences are in consona
 
 ## User Guide
 
-### Download
+### Download & Install
 
 [Download Latest](https://github.com/madmaxieee/taigi-telex/releases/tag/latest)
 
-**Important:**
+1. Download the `TaigiTelex-x.x.x.pkg` file
+2. Double-click the PKG file to run the installer
+3. Click through the welcome screen and install
 
-Due to macOS security settings, drag and drop install may not work.
+**Important - Unsigned Package Warning:**
 
-1. If you have already opened the DMG, eject it
-1. Open Terminal (Applications > Utilities > Terminal)
-1. Copy and paste this command, then press Enter:
+This package is not signed with an Apple Developer certificate. On first install, you may see a warning saying the package "cannot be opened because it is from an unidentified developer." To proceed:
 
-   ```sh
-   xattr -cr ~/Downloads/TaigiTelex-arm64.dmg
-   ```
+1. Open **System Settings** → **Privacy & Security**
+2. Scroll down to the "Security" section
+3. Click **Open Anyway** next to the message about TaigiTelex
+4. Confirm when prompted
 
-1. Now you can double-click the DMG file to open it normally
-
-After opening the DMG, drag the app to your Applications folder to install.
+After installation:
+- Go to **System Settings** → **Keyboard** → **Input Sources** (Edit)
+- Click the **+** button and select **Tâi-gí Telex** from **Chinese, Traditional**
+- If the input method doesn't appear, log out and log back in
 
 ### Basic Rules
 
@@ -141,7 +143,6 @@ Both modes support `ng` and `m` as vowels when no other vowels are present.
 
 ```sh
 brew install cmake ninja
-pip install "dmgbuild[badge_icons]"
 # or if you use mise
 mise i
 ```
@@ -159,16 +160,24 @@ mise run build
 
 ### Install
 
-Either open `build/TaigiTelex.dmg` (if prompted with a "TaigiTelex is in use" error, execute `pkill TaigiTelex` and retry), or
-
 ```sh
 cmake --install build
 # or if you use mise
 mise run install
 ```
 
-- On first time installation, log out and log back in, then in `System Settings` -> `Keyboard` -> `Input Sources` (Edit), `Tâi-gí Telex` from `Chinese, Traditional`.
+- On first time installation, log out and log back in, then in `System Settings` -> `Keyboard` -> `Input Sources` (Edit), `Tâi-gí Telex` from `Chinese, Traditional`.
 - On further installations, switch to another input method, `pkill TaigiTelex`, then switch back.
+
+### Package
+
+To build a distributable PKG installer:
+
+```sh
+mise run package
+```
+
+The PKG will be created at `build/TaigiTelex-x.x.x.pkg`.
 
 ## Acknowledgement
 

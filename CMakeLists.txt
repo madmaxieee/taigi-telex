@@ -29,11 +29,11 @@ set(APP_PATH "${CMAKE_CURRENT_BINARY_DIR}/TaigiTelex.app/Contents")
 
 add_custom_command(TARGET TaigiTelex POST_BUILD
     COMMAND mkdir -p "${APP_PATH}/Resources"
-    COMMAND cp dmg/POJ-input-menu.tiff "${APP_PATH}/Resources"
-    COMMAND cp dmg/TW-input-menu.tiff "${APP_PATH}/Resources"
-    COMMAND cp dmg/TW-preference.tiff "${APP_PATH}/Resources"
-    COMMAND cp dmg/taigi-telex.icns "${APP_PATH}/Resources"
-    COMMAND cp -r dmg/en.lproj "${APP_PATH}/Resources"
+    COMMAND cp resources/POJ-input-menu.tiff "${APP_PATH}/Resources"
+    COMMAND cp resources/TW-input-menu.tiff "${APP_PATH}/Resources"
+    COMMAND cp resources/TW-preference.tiff "${APP_PATH}/Resources"
+    COMMAND cp resources/taigi-telex.icns "${APP_PATH}/Resources"
+    COMMAND cp -r resources/en.lproj "${APP_PATH}/Resources"
     COMMAND rm -f "${APP_PATH}/MacOS/TaigiTelex.d"
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )

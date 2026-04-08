@@ -4,11 +4,16 @@ import InputMethodKit
 class TaigiTelexInputController: IMKInputController {
     private var engine: TelexEngine
 
+    private static let currentModeKey = "taigiTelex.currentMode"
+
     override init!(server: IMKServer!, delegate: Any!, client inputClient: Any!) {
         NSLog("[TaigiTelex] InputController init called")
-        // Default to TL mode initially - system will call setValue with actual mode
-        engine = TelexEngine(inputMode: .tl)
-        NSLog("[TaigiTelex] Engine created with default mode: \(engine.inputMode)")
+        // Read last used mode from UserDefaults, fallback to TL
+        let savedModeString = UserDefaults.standard.string(forKey: Self.currentModeKey)
+            ?? InputMode.tl.rawValue
+        let initialMode = InputMode(rawValue: savedModeString) ?? .tl
+        engine = TelexEngine(inputMode: initialMode)
+        NSLog("[TaigiTelex] Engine created with mode: \(engine.inputMode) (saved: \(savedModeString))")
         super.init(server: server, delegate: delegate, client: inputClient)
         NSLog("[TaigiTelex] InputController init complete")
     }
@@ -29,6 +34,9 @@ class TaigiTelexInputController: IMKInputController {
         if engine.inputMode != newMode {
             NSLog("[TaigiTelex] Mode changing from \(engine.inputMode) to \(newMode)")
 
+            // Persist the mode change
+            UserDefaults.standard.set(newMode.rawValue, forKey: Self.currentModeKey)
+
             // Commit any pending composition before switching
             if !engine.isEmpty {
                 commitComposition(sender)
@@ -40,6 +48,30 @@ class TaigiTelexInputController: IMKInputController {
         } else {
             NSLog("[TaigiTelex] Mode unchanged: \(newMode)")
         }
+    }
+
+    /// Called when the application becomes active
+    override func activateServer(_ sender: Any!) {
+        super.activateServer(sender)
+        // Ensure we're in sync with the persisted mode when app becomes active
+        let savedModeString = UserDefaults.standard.string(forKey: Self.currentModeKey)
+            ?? InputMode.tl.rawValue
+        if let savedMode = InputMode(rawValue: savedModeString), engine.inputMode != savedMode {
+            NSLog("[TaigiTelex] Syncing engine mode on activate: \(engine.inputMode) -> \(savedMode)")
+            if !engine.isEmpty {
+                commitComposition(sender)
+            }
+            engine = TelexEngine(inputMode: savedMode)
+        }
+    }
+
+    /// Called when the application resigns active
+    override func deactivateServer(_ sender: Any!) {
+        // Commit any pending composition when leaving the app
+        if !engine.isEmpty {
+            commitComposition(sender)
+        }
+        super.deactivateServer(sender)
     }
 
     @objc(handleEvent:client:)

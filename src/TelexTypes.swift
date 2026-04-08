@@ -30,12 +30,12 @@ enum TelexKeys {
     static let doubleVowelKeysPOJ: Set<Character> = ["n", "o", "N", "O"]
 
     static func isToneKey(_ char: Character?) -> Bool {
-        guard let char = char else { return false }
+        guard let char else { return false }
         return toneKeys.contains(char)
     }
 
     static func isConsonantKey(_ char: Character?, mode: InputMode) -> Bool {
-        guard let char = char else { return false }
+        guard let char else { return false }
         switch mode {
         case .tl:
             return consonantKeysTL.contains(char)
@@ -46,11 +46,11 @@ enum TelexKeys {
     }
 
     static func isHyphenKey(_ char: Character) -> Bool {
-        return char == hyphenKey || char == hyphenKeyUpper
+        char == hyphenKey || char == hyphenKeyUpper
     }
 
     static func isLetter(_ char: Character) -> Bool {
-        return (char >= "a" && char <= "z") || (char >= "A" && char <= "Z")
+        (char >= "a" && char <= "z") || (char >= "A" && char <= "Z")
     }
 
     static func isDoubleVowelKey(_ char: Character, mode: InputMode) -> Bool {

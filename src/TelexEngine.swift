@@ -13,10 +13,10 @@ class TelexEngine {
     func process(_ char: Character) -> TelexResult {
         switch state {
         case .empty:
-            return handleEmptyState(char)
+            handleEmptyState(char)
 
         case let .composing(currentRaw, _):
-            return handleComposingState(char, currentRaw: currentRaw)
+            handleComposingState(char, currentRaw: currentRaw)
         }
     }
 
@@ -38,7 +38,7 @@ class TelexEngine {
         let isToneChar = TelexKeys.isToneKey(char)
 
         // Different tone key = override the tone
-        if endsWithTone && isToneChar && currentRaw.last != char {
+        if endsWithTone, isToneChar, currentRaw.last != char {
             let newRaw = String(currentRaw.dropLast()) + String(char)
             let newDisplay = TelexRules.transform(newRaw, mode: inputMode)
             state = .composing(raw: newRaw, display: newDisplay)
@@ -46,7 +46,7 @@ class TelexEngine {
         }
 
         // Same tone key = escape (commit raw without tone, process char as new)
-        if endsWithTone && isToneChar && currentRaw.last == char {
+        if endsWithTone, isToneChar, currentRaw.last == char {
             let rawToCommit = String(currentRaw.dropLast())
             state = .empty
             return .commitRawAndProcess(rawToCommit, char)

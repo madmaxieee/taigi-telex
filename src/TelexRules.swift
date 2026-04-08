@@ -91,7 +91,7 @@ enum TelexRules {
     // MARK: - Hyphen Mapping
 
     private static func applyHyphenMapping(_ input: String) -> String {
-        return input.replacingOccurrences(of: "f", with: "-")
+        input.replacingOccurrences(of: "f", with: "-")
             .replacingOccurrences(of: "F", with: "-")
     }
 
@@ -121,7 +121,7 @@ enum TelexRules {
         let position = findTonePosition(syllable, mode: mode)
 
         // Only apply tone if we found a valid vowel position
-        guard position >= 0 && position < syllable.count else {
+        guard position >= 0, position < syllable.count else {
             return input
         }
 
@@ -232,7 +232,7 @@ enum TelexRules {
         guard let lastChar = input.last else { return false }
 
         // Check if last char is same as new char and is a consonant key
-        if lastChar == char && TelexKeys.isConsonantKey(char, mode: mode) {
+        if lastChar == char, TelexKeys.isConsonantKey(char, mode: mode) {
             return true
         }
 

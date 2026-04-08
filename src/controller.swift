@@ -139,13 +139,13 @@ class TaigiTelexInputController: IMKInputController {
             client.setMarkedText(
                 "",
                 selectionRange: NSRange(location: 0, length: 0),
-                replacementRange: NSRange(location: NSNotFound, length: NSNotFound)
+                replacementRange: NSRange(location: NSNotFound, length: NSNotFound),
             )
         } else {
             client.setMarkedText(
                 display,
                 selectionRange: NSRange(location: display.utf16.count, length: 0),
-                replacementRange: NSRange(location: NSNotFound, length: NSNotFound)
+                replacementRange: NSRange(location: NSNotFound, length: NSNotFound),
             )
         }
     }
@@ -159,7 +159,7 @@ class TaigiTelexInputController: IMKInputController {
             let display = TelexRules.transform(raw, mode: engine.inputMode)
             client.insertText(
                 display,
-                replacementRange: NSRange(location: NSNotFound, length: NSNotFound)
+                replacementRange: NSRange(location: NSNotFound, length: NSNotFound),
             )
             engine.reset()
         }
@@ -179,7 +179,7 @@ class TaigiTelexInputController: IMKInputController {
         _ result: TelexResult,
         event: NSEvent,
         client: IMKTextInput,
-        sender: Any!
+        sender: Any!,
     ) -> Bool {
         switch result {
         case let .update(display):
@@ -189,34 +189,34 @@ class TaigiTelexInputController: IMKInputController {
         case let .commitAndPassthrough(committedText, _):
             client.insertText(
                 committedText,
-                replacementRange: NSRange(location: NSNotFound, length: NSNotFound)
+                replacementRange: NSRange(location: NSNotFound, length: NSNotFound),
             )
             return false
 
         case let .commitRawAndProcess(rawText, newChar):
             client.insertText(
                 rawText,
-                replacementRange: NSRange(location: NSNotFound, length: NSNotFound)
+                replacementRange: NSRange(location: NSNotFound, length: NSNotFound),
             )
             return handle(
                 createKeyEvent(event, char: newChar),
-                client: sender
+                client: sender,
             )
 
         case let .commitAndProcess(committedText, newChar):
             client.insertText(
                 committedText,
-                replacementRange: NSRange(location: NSNotFound, length: NSNotFound)
+                replacementRange: NSRange(location: NSNotFound, length: NSNotFound),
             )
             return handle(
                 createKeyEvent(event, char: newChar),
-                client: sender
+                client: sender,
             )
 
         case let .commit(committedText):
             client.insertText(
                 committedText,
-                replacementRange: NSRange(location: NSNotFound, length: NSNotFound)
+                replacementRange: NSRange(location: NSNotFound, length: NSNotFound),
             )
             return true
         }
@@ -233,7 +233,7 @@ class TaigiTelexInputController: IMKInputController {
             characters: String(char),
             charactersIgnoringModifiers: String(char),
             isARepeat: false,
-            keyCode: 0
+            keyCode: 0,
         )
     }
 
@@ -244,7 +244,7 @@ class TaigiTelexInputController: IMKInputController {
             let display = TelexRules.transform(raw, mode: engine.inputMode)
             client.insertText(
                 display,
-                replacementRange: NSRange(location: NSNotFound, length: NSNotFound)
+                replacementRange: NSRange(location: NSNotFound, length: NSNotFound),
             )
             engine.reset()
         }
@@ -257,7 +257,7 @@ class TaigiTelexInputController: IMKInputController {
             client.setMarkedText(
                 "",
                 selectionRange: NSRange(location: 0, length: 0),
-                replacementRange: NSRange(location: NSNotFound, length: NSNotFound)
+                replacementRange: NSRange(location: NSNotFound, length: NSNotFound),
             )
         }
 

@@ -7,7 +7,7 @@ on:
   pull_request:
 
 jobs:
-  build:
+  build-nightly:
     runs-on: macos-latest
     permissions:
       contents: write
@@ -25,6 +25,16 @@ jobs:
       - name: Build universal PKG
         run: |
           scripts/build_pkg.sh --universal
+
+      - name: Prepare nightly build artifact
+        if: ${{ github.ref == 'refs/heads/main' }}
+        run: |
+          VERSION=$(cat VERSION)
+          DATE=$(date +%Y%m%d)
+          SHORT_SHA=$(git rev-parse --short HEAD)
+          NEW_NAME="TaigiTelex-${VERSION}-nightly-${DATE}-${SHORT_SHA}.pkg"
+          mv build/TaigiTelex-*.pkg "build/${NEW_NAME}"
+          echo "Renamed package to: ${NEW_NAME}"
 
       - name: Release
         if: ${{ github.ref == 'refs/heads/main' }}

@@ -6,16 +6,14 @@ ninja = "latest"
 # Swift tooling
 swiftformat = "latest"
 
-[env]
-# Build configuration
-CMAKE_GENERATOR = "Ninja"
-ARCH = "arm64"
-CMAKE_BUILD_TYPE = "Release"
+[tasks.setup]
+description = "Resolve Swift packages for sourcekit-lsp"
+run = "swift package resolve"
 
 [tasks.build]
 description = "Build the TaigiTelex input method"
 run = """
-cmake -B build -G Ninja -DARCH=arm64 -DCMAKE_BUILD_TYPE=Release -DCMAKE_EXPORT_COMPILE_COMMANDS=1
+cmake -B build -G Ninja -DARCH=arm64 -DCMAKE_BUILD_TYPE=Release
 cmake --build build
 """
 

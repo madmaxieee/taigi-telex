@@ -53,7 +53,7 @@ public class TelexEngine {
     }
 
     // Same consonant key = escape (commit raw consonant, don't process char)
-    if TelexRules.isConsonantEscape(currentRaw, char: char) {
+    if TelexRules.isConsonantReplacementEscape(currentRaw, char: char) {
       state = .empty
       return .commit(currentRaw)
     }

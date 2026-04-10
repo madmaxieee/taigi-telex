@@ -196,7 +196,7 @@ public enum TelexRules {
     return false
   }
 
-  public static func isConsonantEscape(_ input: String, char: Character) -> Bool {
+  public static func isConsonantReplacementEscape(_ input: String, char: Character) -> Bool {
     guard let lastChar = input.last else { return false }
 
     // Check if last char is same as new char and is a consonant key

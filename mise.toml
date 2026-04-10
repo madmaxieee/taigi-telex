@@ -30,7 +30,11 @@ run = "rm -rf build"
 
 [tasks.format]
 description = "Format Swift source files with swiftformat"
-run = "xcrun swift-format format --recursive --in-place src/"
+run = "xcrun swift-format format --in-place **/*.swift"
+
+[tasks.test]
+description = "Run unit tests"
+run = "swift test"
 
 [tasks.package]
 description = "Build and package TaigiTelex as PKG"

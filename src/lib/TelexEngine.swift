@@ -1,16 +1,16 @@
 import Foundation
 
-class TelexEngine {
-  let inputMode: InputMode
-  private(set) var state: TelexState = .empty
+public class TelexEngine {
+  public let inputMode: InputMode
+  private(set) public var state: TelexState = .empty
 
-  init(inputMode: InputMode) {
+  public init(inputMode: InputMode) {
     NSLog("[TaigiTelex] TelexEngine init with mode: \(inputMode)")
     self.inputMode = inputMode
     NSLog("[TaigiTelex] TelexEngine inputMode set to: \(self.inputMode)")
   }
 
-  func process(_ char: Character) -> TelexResult {
+  public func process(_ char: Character) -> TelexResult {
     switch state {
     case .empty:
       handleEmptyState(char)
@@ -90,7 +90,7 @@ class TelexEngine {
     return .update(display: newDisplay)
   }
 
-  func backspace() -> TelexResult? {
+  public func backspace() -> TelexResult? {
     switch state {
     case .empty:
       // Buffer empty, let native handle
@@ -111,11 +111,11 @@ class TelexEngine {
     }
   }
 
-  func reset() {
+  public func reset() {
     state = .empty
   }
 
-  var isEmpty: Bool {
+  public var isEmpty: Bool {
     if case .empty = state {
       return true
     }

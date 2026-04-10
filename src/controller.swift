@@ -1,4 +1,5 @@
 import InputMethodKit
+import TaigiTelexLib
 
 @objc(TaigiTelexInputController)
 class TaigiTelexInputController: IMKInputController {

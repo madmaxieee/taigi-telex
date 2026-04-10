@@ -1,9 +1,9 @@
 import Foundation
 
-enum TelexRules {
+public enum TelexRules {
   // MARK: - Tone Marks (same for both modes)
 
-  static let toneMarks: [Character: String] = [
+  public static let toneMarks: [Character: String] = [
     "v": "\u{0301}",  // combining acute (2nd tone)
     "y": "\u{0300}",  // combining grave (3rd tone)
     "d": "\u{0302}",  // combining circumflex (5th tone)
@@ -20,14 +20,14 @@ enum TelexRules {
 
   // MARK: - Consonant Mappings
 
-  static let consonantMapTL: [Character: String] = [
+  public static let consonantMapTL: [Character: String] = [
     "z": "ts",
     "Z": "Ts",
     "c": "tsh",
     "C": "Tsh",
   ]
 
-  static let consonantMapPOJ: [Character: String] = [
+  public static let consonantMapPOJ: [Character: String] = [
     "z": "ch",
     "Z": "Ch",
     "c": "chh",
@@ -36,7 +36,7 @@ enum TelexRules {
 
   // MARK: - Double Vowel Mappings (POJ only)
 
-  static let doubleVowelMapPOJ: [String: String] = [
+  public static let doubleVowelMapPOJ: [String: String] = [
     "nn": "\u{207F}",  // superscript n (ⁿ)
     "NN": "\u{207F}",
     "Nn": "\u{207F}",
@@ -49,17 +49,19 @@ enum TelexRules {
 
   // MARK: - Vowel Priority
 
-  static let vowelPriorityTL = ["a", "e", "o", "u", "i"]
-  static let vowelPriorityPOJ = ["o\u{0358}", "a", "e", "o", "u", "i"]  // o͘ has highest priority
+  public static let vowelPriorityTL = ["a", "e", "o", "u", "i"]
+  public static let vowelPriorityPOJ = ["o\u{0358}", "a", "e", "o", "u", "i"]  // o͘ has highest priority
 
   // MARK: - Valid Vowels for Tone Marking
 
-  static let validVowelsTL: Set<Character> = ["a", "e", "i", "o", "u", "m", "n"]
-  static let validVowelsPOJ: Set<Character> = ["a", "e", "i", "o", "u", "m", "n", "o\u{0358}"]  // include o͘
+  public static let validVowelsTL: Set<Character> = ["a", "e", "i", "o", "u", "m", "n"]
+  public static let validVowelsPOJ: Set<Character> = [
+    "a", "e", "i", "o", "u", "m", "n", "o\u{0358}",
+  ]  // include o͘
 
   // MARK: - Main Transform Function
 
-  static func transform(_ input: String, mode: InputMode) -> String {
+  public static func transform(_ input: String, mode: InputMode) -> String {
     var result = input
 
     // Step 1: Apply consonant mappings
@@ -147,7 +149,7 @@ enum TelexRules {
 
   // MARK: - Tone Position Finding
 
-  static func findTonePosition(_ syllable: String, mode: InputMode) -> Int {
+  public static func findTonePosition(_ syllable: String, mode: InputMode) -> Int {
     let lower = syllable.lowercased()
 
     // Mode-specific exceptions
@@ -205,7 +207,9 @@ enum TelexRules {
 
   // MARK: - Check if input ends with double key transform escape pattern (POJ)
 
-  static func isDoubleTransformEscape(_ input: String, char: Character, mode: InputMode) -> Bool {
+  public static func isDoubleTransformEscape(_ input: String, char: Character, mode: InputMode)
+    -> Bool
+  {
     guard mode == .poj else { return false }
     guard TelexKeys.isDoubleTransformKey(char, mode: mode) else { return false }
     guard input.count >= 2 else { return false }
@@ -226,7 +230,7 @@ enum TelexRules {
 
   // MARK: - Check if input ends with consonant escape pattern
 
-  static func isConsonantEscape(_ input: String, char: Character) -> Bool {
+  public static func isConsonantEscape(_ input: String, char: Character) -> Bool {
     guard let lastChar = input.last else { return false }
 
     // Check if last char is same as new char and is a consonant key

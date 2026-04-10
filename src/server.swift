@@ -1,5 +1,6 @@
 import Cocoa
 import InputMethodKit
+import TaigiTelexLib
 
 class NSManualApplication: NSApplication {
   private let appDelegate = AppDelegate()

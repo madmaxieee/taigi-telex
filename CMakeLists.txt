@@ -16,14 +16,21 @@ if(NOT ARCH STREQUAL "native")
     add_compile_options(-target "${ARCH}-apple-macos11")
 endif()
 
+# Library target for core logic
+add_library(TaigiTelexLib STATIC
+    src/lib/TelexTypes.swift
+    src/lib/TelexRules.swift
+    src/lib/TelexEngine.swift
+)
+
+# Executable target
 add_executable(TaigiTelex
     MACOSX_BUNDLE
     src/server.swift
     src/controller.swift
-    src/TelexTypes.swift
-    src/TelexRules.swift
-    src/TelexEngine.swift
 )
+
+target_link_libraries(TaigiTelex TaigiTelexLib)
 
 set(APP_PATH "${CMAKE_CURRENT_BINARY_DIR}/TaigiTelex.app/Contents")
 

@@ -149,34 +149,32 @@ enum TelexRules {
 
   static func findTonePosition(_ syllable: String, mode: InputMode) -> Int {
     let lower = syllable.lowercased()
-    let vowelPriority = mode == .tl ? vowelPriorityTL : vowelPriorityPOJ
 
     // Mode-specific exceptions
-    if mode == .tl {
+    switch mode {
+    case .tl:
       // TL exceptions: iu -> mark on u, ui -> mark on i
       if let range = lower.range(of: "iu") {
         let uIndex = lower.index(range.lowerBound, offsetBy: 1)
         return syllable.distance(from: syllable.startIndex, to: uIndex)
       }
-
       if let range = lower.range(of: "ui") {
         let iIndex = lower.index(range.lowerBound, offsetBy: 1)
         return syllable.distance(from: syllable.startIndex, to: iIndex)
       }
-    } else {
+    case .poj:
       // POJ exceptions: eo -> mark on e, oe -> mark on o
       if let range = lower.range(of: "eo") {
-        let eIndex = lower.index(range.lowerBound, offsetBy: 0)
+        let eIndex = range.lowerBound
         return syllable.distance(from: syllable.startIndex, to: eIndex)
       }
-
       if let range = lower.range(of: "oe") {
-        let oIndex = lower.index(range.lowerBound, offsetBy: 0)
+        let oIndex = range.lowerBound
         return syllable.distance(from: syllable.startIndex, to: oIndex)
       }
     }
 
-    // Priority order: a, e, o, u, i (TL) or o͘, a, e, o, u, i (POJ)
+    let vowelPriority = mode == .tl ? vowelPriorityTL : vowelPriorityPOJ
     for vowel in vowelPriority {
       if let range = lower.range(of: vowel) {
         return syllable.distance(from: syllable.startIndex, to: range.lowerBound)
@@ -205,11 +203,11 @@ enum TelexRules {
     return -1
   }
 
-  // MARK: - Check if input ends with double vowel escape pattern (POJ)
+  // MARK: - Check if input ends with double key transform escape pattern (POJ)
 
-  static func isDoubleVowelEscape(_ input: String, char: Character, mode: InputMode) -> Bool {
+  static func isDoubleTransformEscape(_ input: String, char: Character, mode: InputMode) -> Bool {
     guard mode == .poj else { return false }
-    guard TelexKeys.isDoubleVowelKey(char, mode: mode) else { return false }
+    guard TelexKeys.isDoubleTransformKey(char, mode: mode) else { return false }
     guard input.count >= 2 else { return false }
 
     let lastTwo = String(input.suffix(2))
@@ -228,11 +226,11 @@ enum TelexRules {
 
   // MARK: - Check if input ends with consonant escape pattern
 
-  static func isConsonantEscape(_ input: String, char: Character, mode: InputMode) -> Bool {
+  static func isConsonantEscape(_ input: String, char: Character) -> Bool {
     guard let lastChar = input.last else { return false }
 
     // Check if last char is same as new char and is a consonant key
-    if lastChar == char, TelexKeys.isConsonantKey(char, mode: mode) {
+    if lastChar == char, TelexKeys.isConsonantReplacementKey(char) {
       return true
     }
 

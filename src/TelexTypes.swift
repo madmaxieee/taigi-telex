@@ -23,40 +23,32 @@ enum TelexKeys {
     "v", "y", "d", "w", "x", "q", "V", "Y", "D", "W", "X", "Q",
   ]
 
-  // TL-specific keys
-  static let consonantKeysTL: Set<Character> = ["z", "c", "Z", "C"]
-  static let hyphenKey: Character = "f"
-  static let hyphenKeyUpper: Character = "F"
+  static let consonantKeys: Set<Character> = ["z", "c", "Z", "C"]
+  static let hyphenKeys: Set<Character> = ["f", "F"]
 
   /// POJ-specific keys
-  static let doubleVowelKeysPOJ: Set<Character> = ["n", "o", "N", "O"]
+  static let doubleTransformKeysPOJ: Set<Character> = ["n", "o", "N", "O"]
 
   static func isToneKey(_ char: Character?) -> Bool {
     guard let char else { return false }
     return toneKeys.contains(char)
   }
 
-  static func isConsonantKey(_ char: Character?, mode: InputMode) -> Bool {
+  static func isConsonantReplacementKey(_ char: Character?) -> Bool {
     guard let char else { return false }
-    switch mode {
-    case .tl:
-      return consonantKeysTL.contains(char)
-    case .poj:
-      // In POJ, z and c are consonant keys
-      return ["z", "c", "Z", "C"].contains(char)
-    }
+    return consonantKeys.contains(char)
   }
 
   static func isHyphenKey(_ char: Character) -> Bool {
-    char == hyphenKey || char == hyphenKeyUpper
+    hyphenKeys.contains(char)
   }
 
   static func isLetter(_ char: Character) -> Bool {
     (char >= "a" && char <= "z") || (char >= "A" && char <= "Z")
   }
 
-  static func isDoubleVowelKey(_ char: Character, mode: InputMode) -> Bool {
+  static func isDoubleTransformKey(_ char: Character, mode: InputMode) -> Bool {
     guard mode == .poj else { return false }
-    return doubleVowelKeysPOJ.contains(char)
+    return doubleTransformKeysPOJ.contains(char)
   }
 }

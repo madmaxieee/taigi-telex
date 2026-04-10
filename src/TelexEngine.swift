@@ -53,14 +53,14 @@ class TelexEngine {
     }
 
     // Same consonant key = escape (commit raw consonant, don't process char)
-    if TelexRules.isConsonantEscape(currentRaw, char: char, mode: inputMode) {
+    if TelexRules.isConsonantEscape(currentRaw, char: char) {
       state = .empty
       return .commit(currentRaw)
     }
 
     // POJ: Triple vowel key = escape (commit double vowel as escaped, process char)
     if inputMode == .poj {
-      if TelexRules.isDoubleVowelEscape(currentRaw, char: char, mode: inputMode) {
+      if TelexRules.isDoubleTransformEscape(currentRaw, char: char, mode: inputMode) {
         // Commit the first two (which will be transformed to nn or oo)
         let escapedRaw = String(currentRaw.dropLast())
         let display = TelexRules.transform(escapedRaw, mode: inputMode)

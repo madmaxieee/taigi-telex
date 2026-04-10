@@ -161,25 +161,17 @@ public enum TelexRules {
       }
     }
 
-    // No regular vowels found - check for syllabic consonants
-    // Check for syllabic ng - only valid if no other vowels
-    if lower == "ng" {
-      if let range = lower.range(of: "ng") {
-        return syllable.distance(from: syllable.startIndex, to: range.lowerBound)
-      }
+    // Syllabic consonants (m, ng) can function as syllable nucleus
+    // when no true vowel is present. Check for ng first (higher priority),
+    // then check for m.
+    if let range = lower.range(of: "ng") {
+      return syllable.distance(from: syllable.startIndex, to: range.lowerBound)
     }
-
-    // Check for standalone m or n or ⁿ - only valid if it's just that
-    if lower == "m" || lower == "n" || lower == "\u{207F}" {
-      return 0
-    }
-
-    // Check for superscript n (ⁿ) in the syllable
-    if let range = lower.range(of: "\u{207F}") {
+    if let range = lower.range(of: "m") {
       return syllable.distance(from: syllable.startIndex, to: range.lowerBound)
     }
 
-    // No vowel found
+    // No vowel or syllabic consonant found
     return -1
   }
 

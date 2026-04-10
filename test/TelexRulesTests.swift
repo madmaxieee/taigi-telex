@@ -118,5 +118,35 @@ struct TelexRulesTests {
         #expect(TelexRules.findTonePosition("io", mode: .poj) == 1)
       }
     }
+
+    @Suite("Syllabic Consonants")
+    struct SyllabicConsonantsTests {
+      @Test("Consonant + Vowel -> Vowel", arguments: [InputMode.tl, InputMode.poj])
+      func consonantVowel(mode: InputMode) {
+        #expect(TelexRules.findTonePosition("ma", mode: mode) == 1)
+        #expect(TelexRules.findTonePosition("nga", mode: mode) == 2)
+        #expect(TelexRules.findTonePosition("ta", mode: mode) == 1)
+      }
+
+      @Test("Vowel + Consonant -> Vowel", arguments: [InputMode.tl, InputMode.poj])
+      func vowelConsonant(mode: InputMode) {
+        #expect(TelexRules.findTonePosition("am", mode: mode) == 0)
+        #expect(TelexRules.findTonePosition("ang", mode: mode) == 0)
+        #expect(TelexRules.findTonePosition("at", mode: mode) == 0)
+      }
+
+      @Test("Syllabic ng", arguments: [InputMode.tl, InputMode.poj])
+      func syllabicNg(mode: InputMode) {
+        #expect(TelexRules.findTonePosition("ng", mode: mode) == 0)
+        #expect(TelexRules.findTonePosition("png", mode: mode) == 1)
+        #expect(TelexRules.findTonePosition("mng", mode: mode) == 1)
+      }
+
+      @Test("Syllabic m", arguments: [InputMode.tl, InputMode.poj])
+      func syllabicM(mode: InputMode) {
+        #expect(TelexRules.findTonePosition("m", mode: mode) == 0)
+        #expect(TelexRules.findTonePosition("hm", mode: mode) == 1)
+      }
+    }
   }
 }

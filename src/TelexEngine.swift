@@ -1,124 +1,124 @@
 import Foundation
 
 class TelexEngine {
-    let inputMode: InputMode
-    private(set) var state: TelexState = .empty
+  let inputMode: InputMode
+  private(set) var state: TelexState = .empty
 
-    init(inputMode: InputMode) {
-        NSLog("[TaigiTelex] TelexEngine init with mode: \(inputMode)")
-        self.inputMode = inputMode
-        NSLog("[TaigiTelex] TelexEngine inputMode set to: \(self.inputMode)")
+  init(inputMode: InputMode) {
+    NSLog("[TaigiTelex] TelexEngine init with mode: \(inputMode)")
+    self.inputMode = inputMode
+    NSLog("[TaigiTelex] TelexEngine inputMode set to: \(self.inputMode)")
+  }
+
+  func process(_ char: Character) -> TelexResult {
+    switch state {
+    case .empty:
+      handleEmptyState(char)
+
+    case let .composing(currentRaw, _):
+      handleComposingState(char, currentRaw: currentRaw)
+    }
+  }
+
+  private func handleEmptyState(_ char: Character) -> TelexResult {
+    // Check if char is a letter - if not, pass through
+    if !TelexKeys.isLetter(char) {
+      return .commitAndPassthrough("", String(char))
     }
 
-    func process(_ char: Character) -> TelexResult {
-        switch state {
-        case .empty:
-            handleEmptyState(char)
+    // Start composing
+    let raw = String(char)
+    let display = TelexRules.transform(raw, mode: inputMode)
+    state = .composing(raw: raw, display: display)
+    return .update(display: display)
+  }
 
-        case let .composing(currentRaw, _):
-            handleComposingState(char, currentRaw: currentRaw)
-        }
+  private func handleComposingState(_ char: Character, currentRaw: String) -> TelexResult {
+    let endsWithTone = TelexKeys.isToneKey(currentRaw.last)
+    let isToneChar = TelexKeys.isToneKey(char)
+
+    // Different tone key = override the tone
+    if endsWithTone, isToneChar, currentRaw.last != char {
+      let newRaw = String(currentRaw.dropLast()) + String(char)
+      let newDisplay = TelexRules.transform(newRaw, mode: inputMode)
+      state = .composing(raw: newRaw, display: newDisplay)
+      return .update(display: newDisplay)
     }
 
-    private func handleEmptyState(_ char: Character) -> TelexResult {
-        // Check if char is a letter - if not, pass through
-        if !TelexKeys.isLetter(char) {
-            return .commitAndPassthrough("", String(char))
-        }
-
-        // Start composing
-        let raw = String(char)
-        let display = TelexRules.transform(raw, mode: inputMode)
-        state = .composing(raw: raw, display: display)
-        return .update(display: display)
+    // Same tone key = escape (commit raw without tone, process char as new)
+    if endsWithTone, isToneChar, currentRaw.last == char {
+      let rawToCommit = String(currentRaw.dropLast())
+      state = .empty
+      return .commitRawAndProcess(rawToCommit, char)
     }
 
-    private func handleComposingState(_ char: Character, currentRaw: String) -> TelexResult {
-        let endsWithTone = TelexKeys.isToneKey(currentRaw.last)
-        let isToneChar = TelexKeys.isToneKey(char)
-
-        // Different tone key = override the tone
-        if endsWithTone, isToneChar, currentRaw.last != char {
-            let newRaw = String(currentRaw.dropLast()) + String(char)
-            let newDisplay = TelexRules.transform(newRaw, mode: inputMode)
-            state = .composing(raw: newRaw, display: newDisplay)
-            return .update(display: newDisplay)
-        }
-
-        // Same tone key = escape (commit raw without tone, process char as new)
-        if endsWithTone, isToneChar, currentRaw.last == char {
-            let rawToCommit = String(currentRaw.dropLast())
-            state = .empty
-            return .commitRawAndProcess(rawToCommit, char)
-        }
-
-        // Same consonant key = escape (commit raw consonant, don't process char)
-        if TelexRules.isConsonantEscape(currentRaw, char: char, mode: inputMode) {
-            state = .empty
-            return .commit(currentRaw)
-        }
-
-        // POJ: Triple vowel key = escape (commit double vowel as escaped, process char)
-        if inputMode == .poj {
-            if TelexRules.isDoubleVowelEscape(currentRaw, char: char, mode: inputMode) {
-                // Commit the first two (which will be transformed to nn or oo)
-                let escapedRaw = String(currentRaw.dropLast())
-                let display = TelexRules.transform(escapedRaw, mode: inputMode)
-                state = .empty
-                return .commitAndProcess(display, char)
-            }
-        }
-
-        // Hyphen key (f) = commit current and process f as new input
-        if TelexKeys.isHyphenKey(char) {
-            let display = TelexRules.transform(currentRaw, mode: inputMode)
-            state = .empty
-            return .commitAndProcess(display, char)
-        }
-
-        // Check if char is a letter - if not, it's a commit trigger
-        if !TelexKeys.isLetter(char) {
-            let display = TelexRules.transform(currentRaw, mode: inputMode)
-            state = .empty
-            return .commitAndPassthrough(display, String(char))
-        }
-
-        // Continue composing (char is a letter)
-        let newRaw = currentRaw + String(char)
-        let newDisplay = TelexRules.transform(newRaw, mode: inputMode)
-        state = .composing(raw: newRaw, display: newDisplay)
-        return .update(display: newDisplay)
+    // Same consonant key = escape (commit raw consonant, don't process char)
+    if TelexRules.isConsonantEscape(currentRaw, char: char, mode: inputMode) {
+      state = .empty
+      return .commit(currentRaw)
     }
 
-    func backspace() -> TelexResult? {
-        switch state {
-        case .empty:
-            // Buffer empty, let native handle
-            return nil
-
-        case let .composing(raw, _):
-            if raw.count <= 1 {
-                // Clear buffer
-                state = .empty
-                return .update(display: "")
-            }
-
-            // Remove last character
-            let newRaw = String(raw.dropLast())
-            let newDisplay = TelexRules.transform(newRaw, mode: inputMode)
-            state = .composing(raw: newRaw, display: newDisplay)
-            return .update(display: newDisplay)
-        }
-    }
-
-    func reset() {
+    // POJ: Triple vowel key = escape (commit double vowel as escaped, process char)
+    if inputMode == .poj {
+      if TelexRules.isDoubleVowelEscape(currentRaw, char: char, mode: inputMode) {
+        // Commit the first two (which will be transformed to nn or oo)
+        let escapedRaw = String(currentRaw.dropLast())
+        let display = TelexRules.transform(escapedRaw, mode: inputMode)
         state = .empty
+        return .commitAndProcess(display, char)
+      }
     }
 
-    var isEmpty: Bool {
-        if case .empty = state {
-            return true
-        }
-        return false
+    // Hyphen key (f) = commit current and process f as new input
+    if TelexKeys.isHyphenKey(char) {
+      let display = TelexRules.transform(currentRaw, mode: inputMode)
+      state = .empty
+      return .commitAndProcess(display, char)
     }
+
+    // Check if char is a letter - if not, it's a commit trigger
+    if !TelexKeys.isLetter(char) {
+      let display = TelexRules.transform(currentRaw, mode: inputMode)
+      state = .empty
+      return .commitAndPassthrough(display, String(char))
+    }
+
+    // Continue composing (char is a letter)
+    let newRaw = currentRaw + String(char)
+    let newDisplay = TelexRules.transform(newRaw, mode: inputMode)
+    state = .composing(raw: newRaw, display: newDisplay)
+    return .update(display: newDisplay)
+  }
+
+  func backspace() -> TelexResult? {
+    switch state {
+    case .empty:
+      // Buffer empty, let native handle
+      return nil
+
+    case let .composing(raw, _):
+      if raw.count <= 1 {
+        // Clear buffer
+        state = .empty
+        return .update(display: "")
+      }
+
+      // Remove last character
+      let newRaw = String(raw.dropLast())
+      let newDisplay = TelexRules.transform(newRaw, mode: inputMode)
+      state = .composing(raw: newRaw, display: newDisplay)
+      return .update(display: newDisplay)
+    }
+  }
+
+  func reset() {
+    state = .empty
+  }
+
+  var isEmpty: Bool {
+    if case .empty = state {
+      return true
+    }
+    return false
+  }
 }

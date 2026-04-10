@@ -3,9 +3,6 @@
 cmake = "latest"
 ninja = "latest"
 
-# Swift tooling
-swiftformat = "latest"
-
 [tasks.setup]
 description = "Resolve Swift packages for sourcekit-lsp"
 run = "swift package resolve"
@@ -33,7 +30,7 @@ run = "rm -rf build"
 
 [tasks.format]
 description = "Format Swift source files with swiftformat"
-run = "swiftformat src/"
+run = "xcrun swift-format format --recursive --in-place src/"
 
 [tasks.package]
 description = "Build and package TaigiTelex as PKG"

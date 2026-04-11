@@ -420,4 +420,17 @@ struct TelexRulesTests {
       #expect(TelexRules.isConsonantReplacementEscape("s", char: "s") == false)
     }
   }
+
+  @Suite("Basic Syllable Test Cases from README")
+  struct BasicSyllableTestCases {
+    @Test("TL mode syllable transformations", arguments: SyllableTestCase.tlBasic)
+    func tlSyllableTransformations(testCase: SyllableTestCase) {
+      #expect(TelexRules.transform(testCase.input, mode: .tl) == testCase.output)
+    }
+
+    @Test("POJ mode syllable transformations", arguments: SyllableTestCase.pojBasic)
+    func pojSyllableTransformations(testCase: SyllableTestCase) {
+      #expect(TelexRules.transform(testCase.input, mode: .poj) == testCase.output)
+    }
+  }
 }

@@ -48,10 +48,10 @@ Type letters normally. Special keys modify the output:
 
 | Key | TL Output | POJ Output | Usage                                       |
 | --- | --------- | ---------- | ------------------------------------------- |
-| `c` | `ts`      | `chh`      | TL: `ts` / POJ: `chh` aspirated affricate   |
-| `C` | `Ts`      | `Chh`      | Capital form                                |
-| `z` | `tsh`     | `ch`       | TL: `tsh` / POJ: `ch` unaspirated affricate |
-| `Z` | `Tsh`     | `Ch`       | Capital form                                |
+| `c` | `tsh`     | `chh`      | TL: `ts` / POJ: `chh` aspirated affricate   |
+| `C` | `Tsh`     | `Chh`      | Capital form                                |
+| `z` | `ts`      | `ch`       | TL: `tsh` / POJ: `ch` unaspirated affricate |
+| `Z` | `Ts`      | `Ch`       | Capital form                                |
 | `f` | `-`       | `-`        | Hyphen shorthand (both modes)               |
 
 #### POJ-Specific Features
@@ -91,9 +91,9 @@ Add tone marks by typing the corresponding key at the end of a syllable (same in
 | `lang` + `d`         | `lâng`   | Fifth tone                 |
 | `kang` + `w`         | `kāng`   | Seventh tone               |
 | `tit` + `x`          | `ti̍t`    | Eighth tone                |
-| `cang` + `q`         | `tsáng`  | Ninth tone (consonant: ts) |
-| `c`                  | `ts`     | Consonant replacement      |
-| `z`                  | `tsh`    | Consonant replacement      |
+| `zang` + `q`         | `tsáng`  | Ninth tone (consonant: ts) |
+| `z`                  | `ts`     | Consonant replacement      |
+| `c`                  | `tsh`    | Consonant replacement      |
 | `taid` + `f` + `giv` | `tâi-gí` | Hyphen shorthand (f)       |
 
 #### POJ Mode
@@ -106,8 +106,8 @@ Add tone marks by typing the corresponding key at the end of a syllable (same in
 | `ciunn` + `w`        | `chhiūⁿ` | Seventh tone (with consonant replacement) |
 | `lok` + `x`          | `lo̍k`    | Eighth tone                               |
 | `sann`               | `saⁿ`    | Nasalization (nn → ⁿ)                     |
-| `c`                  | `ch`     | Consonant replacement                     |
-| `z`                  | `chh`    | Consonant replacement                     |
+| `z`                  | `ch`     | Consonant replacement                     |
+| `c`                  | `chh`    | Consonant replacement                     |
 | `taid` + `f` + `giv` | `tâi-gí` | Hyphen shorthand (f)                      |
 
 ### Tone Mark Placement

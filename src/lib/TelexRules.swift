@@ -69,19 +69,19 @@ public enum TelexRules {
     return result
   }
 
-  private static func applyConsonantMapping(_ input: String, mode: InputMode) -> String {
+  public static func applyConsonantMapping(_ input: String, mode: InputMode) -> String {
     let consonantMap = mode == .tl ? consonantMapTL : consonantMapPOJ
     return input.map { char in
       consonantMap[char] ?? String(char)
     }.joined()
   }
 
-  private static func applyHyphenMapping(_ input: String) -> String {
+  public static func applyHyphenMapping(_ input: String) -> String {
     input.replacingOccurrences(of: "f", with: "-")
       .replacingOccurrences(of: "F", with: "-")
   }
 
-  private static func applyDoubleVowelMapping(_ input: String) -> String {
+  public static func applyDoubleVowelMapping(_ input: String) -> String {
     var result = input
     for (key, value) in doubleVowelMapPOJ {
       result = result.replacingOccurrences(of: key, with: value)
@@ -89,7 +89,7 @@ public enum TelexRules {
     return result
   }
 
-  private static func applyToneMark(_ input: String, mode: InputMode) -> String {
+  public static func applyToneMark(_ input: String, mode: InputMode) -> String {
     guard let lastChar = input.last,
       let toneMark = toneMarks[lastChar]
     else {
@@ -185,11 +185,8 @@ public enum TelexRules {
     let lastTwo = String(input.suffix(2))
 
     // Check if last two chars are the same and match the new char (nnn or ooo)
-    if lastTwo == String(repeating: char, count: 2).lowercased()
-      || lastTwo == String(repeating: char, count: 2).uppercased()
-      || lastTwo == String(char).lowercased() + String(char).uppercased()
-      || lastTwo == String(char).uppercased() + String(char).lowercased()
-    {
+    let expected = String(repeating: char, count: 2).lowercased()
+    if lastTwo.lowercased() == expected {
       return true
     }
 

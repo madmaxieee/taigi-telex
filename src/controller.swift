@@ -190,7 +190,7 @@ class TaigiTelexInputController: IMKInputController {
       updateMarkedText(display, client: client)
       return true
 
-    case let .commitAndPassthrough(committedText, _):
+    case let .commitAndPassthrough(committedText):
       client.insertText(
         committedText,
         replacementRange: NSRange(location: NSNotFound, length: NSNotFound),

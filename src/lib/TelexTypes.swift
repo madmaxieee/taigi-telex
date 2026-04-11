@@ -10,11 +10,14 @@ public enum TelexState {
   case composing(raw: String, display: String)
 }
 
-public enum TelexResult {
+public enum TelexResult: Equatable {
   case update(display: String)
-  case commitAndPassthrough(String, String)
-  case commitAndProcess(String, Character)  // Commit current, then process char as new input
-  case commit(String)  // Commit and consume the character (don't process it)
+  // Commit current, then consume the character (don't process it)
+  case commit(String)
+  // Commit current, then passthrough the character
+  case commitAndPassthrough(String)
+  // Commit current, then process char as new input
+  case commitAndProcess(String, Character)
 }
 
 public enum TelexKeys {

@@ -23,7 +23,7 @@ public class TelexEngine {
   private func handleEmptyState(_ char: Character) -> TelexResult {
     // Check if char is a letter - if not, pass through
     if !TelexKeys.isLetter(char) {
-      return .commitAndPassthrough("", String(char))
+      return .commitAndPassthrough("")
     }
 
     // Start composing
@@ -80,7 +80,7 @@ public class TelexEngine {
     if !TelexKeys.isLetter(char) {
       let display = TelexRules.transform(currentRaw, mode: inputMode)
       state = .empty
-      return .commitAndPassthrough(display, String(char))
+      return .commitAndPassthrough(display)
     }
 
     // Continue composing (char is a letter)

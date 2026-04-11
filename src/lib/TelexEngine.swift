@@ -49,7 +49,7 @@ public class TelexEngine {
     if endsWithTone, isToneChar, currentRaw.last == char {
       let rawToCommit = String(currentRaw.dropLast())
       state = .empty
-      return .commitRawAndProcess(rawToCommit, char)
+      return .commitAndProcess(rawToCommit, char)
     }
 
     // Same consonant key = escape (commit raw consonant, don't process char)

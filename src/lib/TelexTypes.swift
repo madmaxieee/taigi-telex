@@ -13,7 +13,6 @@ public enum TelexState {
 public enum TelexResult {
   case update(display: String)
   case commitAndPassthrough(String, String)
-  case commitRawAndProcess(String, Character)
   case commitAndProcess(String, Character)  // Commit current, then process char as new input
   case commit(String)  // Commit and consume the character (don't process it)
 }

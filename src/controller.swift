@@ -197,15 +197,13 @@ class TaigiTelexInputController: IMKInputController {
       )
       return false
 
-    case let .commitAndProcess(committedText, newChar):
+    case let .commitAndUpdate(committedText, newDisplay):
       client.insertText(
         committedText,
         replacementRange: NSRange(location: NSNotFound, length: NSNotFound),
       )
-      return handle(
-        createKeyEvent(event, char: newChar),
-        client: sender,
-      )
+      updateMarkedText(newDisplay, client: client)
+      return true
 
     case let .commit(committedText):
       client.insertText(

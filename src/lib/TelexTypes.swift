@@ -16,8 +16,8 @@ public enum TelexResult: Equatable {
   case commit(String)
   // Commit current, then passthrough the character
   case commitAndPassthrough(String)
-  // Commit current, then process char as new input
-  case commitAndProcess(String, Character)
+  // Commit current and update to new display (engine handles the new char internally)
+  case commitAndUpdate(String, String)
 }
 
 public enum TelexKeys {

@@ -203,4 +203,18 @@ public enum TelexRules {
 
     return false
   }
+
+  /// Counts the number of trailing f/F characters at the end of the input.
+  /// Used to determine hyphen key behavior based on how many trailing fs exist.
+  public static func countTrailingHyphenKeys(_ input: String) -> Int {
+    var count = 0
+    for char in input.reversed() {
+      if char == "f" || char == "F" {
+        count += 1
+      } else {
+        break
+      }
+    }
+    return count
+  }
 }

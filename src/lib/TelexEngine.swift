@@ -68,11 +68,35 @@ public class TelexEngine {
       return .commit(display)
     }
 
-    // Hyphen key (f) = commit current and process f as new input
+    // Hyphen key handling
     if TelexKeys.isHyphenKey(char) {
-      let display = TelexRules.transform(currentRaw, mode: inputMode)
-      state = .empty
-      return .commitAndProcess(display, char)
+      let trailingCount = TelexRules.countTrailingHyphenKeys(currentRaw)
+
+      switch trailingCount {
+      case 0:
+        // No trailing f: commit current and start composing with new f
+        let display = TelexRules.transform(currentRaw, mode: inputMode)
+        let newRaw = String(char)
+        let newDisplay = TelexRules.transform(newRaw, mode: inputMode)
+        state = .composing(raw: newRaw, display: newDisplay)
+        return .commitAndUpdate(display, newDisplay)
+
+      case 1:
+        // One trailing f: stay composing with "ff" -> "--"
+        let newRaw = currentRaw + String(char)
+        let newDisplay = TelexRules.transform(newRaw, mode: inputMode)
+        state = .composing(raw: newRaw, display: newDisplay)
+        return .update(display: newDisplay)
+
+      default:
+        // commit the first hyphen key and the rest of the string
+        let rawAndHyphenKey = String(currentRaw.dropLast(trailingCount - 1))
+        let rawToCommit = String(rawAndHyphenKey.dropLast())
+        let hyphenKey = String(rawAndHyphenKey.last!)
+        let display = TelexRules.transform(rawToCommit, mode: inputMode) + hyphenKey
+        state = .empty
+        return .commit(display)
+      }
     }
 
     // Check if char is a letter - if not, it's a commit trigger

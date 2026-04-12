@@ -191,13 +191,13 @@ struct TelexEngineTests {
 
   @Suite("Hyphen Key Processing")
   struct HyphenKeyTests {
-    @Test("Hyphen key commits and processes", arguments: [InputMode.tl, InputMode.poj])
-    func hyphenKeyCommitsAndProcesses(mode: InputMode) {
+    @Test("Hyphen key commits and updates", arguments: [InputMode.tl, InputMode.poj])
+    func hyphenKeyCommitsAndUpdates(mode: InputMode) {
       let engine = TelexEngine(inputMode: mode)
       let results = processString("sif", engine: engine)
 
-      #expect(results.last == .commitAndProcess("si", "f"))
-      #expect(engine.isEmpty == true)
+      #expect(results.last == .commitAndUpdate("si", "-"))
+      #expect(engine.isEmpty == false)
     }
 
     @Test(
@@ -208,6 +208,128 @@ struct TelexEngineTests {
 
       // f is a letter, so it starts composing and gets transformed to hyphen
       #expect(result == .update(display: "-"))
+    }
+
+    @Test("Double hyphen stays composing", arguments: [InputMode.tl, InputMode.poj])
+    func doubleHyphenStaysComposing(mode: InputMode) {
+      let engine = TelexEngine(inputMode: mode)
+      let results = processString("ff", engine: engine)
+
+      #expect(results.count == 2)
+      #expect(results[0] == .update(display: "-"))
+      #expect(results[1] == .update(display: "--"))
+      #expect(engine.isEmpty == false)
+    }
+
+    @Test("Triple lowercase hyphen escapes and commits lowercase f", arguments: [InputMode.tl, InputMode.poj])
+    func tripleLowercaseHyphenEscapes(mode: InputMode) {
+      let engine = TelexEngine(inputMode: mode)
+      let results = processString("fff", engine: engine)
+
+      #expect(results.count == 3)
+      #expect(results[0] == .update(display: "-"))
+      #expect(results[1] == .update(display: "--"))
+      #expect(results[2] == .commit("f"))
+      #expect(engine.isEmpty == true)
+    }
+
+    @Test("Triple uppercase hyphen escapes and commits uppercase F", arguments: [InputMode.tl, InputMode.poj])
+    func tripleUppercaseHyphenEscapes(mode: InputMode) {
+      let engine = TelexEngine(inputMode: mode)
+      let results = processString("Fff", engine: engine)
+
+      #expect(results.count == 3)
+      #expect(results[0] == .update(display: "-"))
+      #expect(results[1] == .update(display: "--"))
+      #expect(results[2] == .commit("F"))
+      #expect(engine.isEmpty == true)
+    }
+
+    @Test("Mixed case triple hyphen commits based on first key case", arguments: [InputMode.tl, InputMode.poj])
+    func mixedCaseTripleHyphenEscapes(mode: InputMode) {
+      let engine = TelexEngine(inputMode: mode)
+
+      // fFf -> first key is lowercase, so commit lowercase
+      let results1 = processString("fFf", engine: engine)
+      #expect(results1.count == 3)
+      #expect(results1[2] == .commit("f"))
+      #expect(engine.isEmpty == true)
+
+      engine.reset()
+
+      // FfF -> first key is uppercase, so commit uppercase
+      let results2 = processString("FfF", engine: engine)
+      #expect(results2.count == 3)
+      #expect(results2[2] == .commit("F"))
+      #expect(engine.isEmpty == true)
+    }
+
+    @Test("Hyphen after word with trailing f", arguments: [InputMode.tl, InputMode.poj])
+    func hyphenAfterWordWithTrailingF(mode: InputMode) {
+      let engine = TelexEngine(inputMode: mode)
+      let results = processString("siff", engine: engine)
+
+      #expect(results.count == 4)
+      #expect(results[0] == .update(display: "s"))
+      #expect(results[1] == .update(display: "si"))
+      // commitAndUpdate commits "si" and starts composing with "f" -> "-"
+      #expect(results[2] == .commitAndUpdate("si", "-"))
+      // Engine is now composing with "f", so second f makes "ff" -> "--"
+      #expect(results[3] == .update(display: "--"))
+      #expect(engine.isEmpty == false)
+    }
+
+    @Test("Triple f after word escapes with lowercase", arguments: [InputMode.tl, InputMode.poj])
+    func tripleFLowercaseAfterWordEscapes(mode: InputMode) {
+      let engine = TelexEngine(inputMode: mode)
+      let results = processString("sifff", engine: engine)
+
+      #expect(results.count == 5)
+      #expect(results[0] == .update(display: "s"))
+      #expect(results[1] == .update(display: "si"))
+      // First f: commitAndUpdate commits "si" and starts composing with "f" -> "-"
+      #expect(results[2] == .commitAndUpdate("si", "-"))
+      // Second f: already composing with "f", so makes "ff" -> "--"
+      #expect(results[3] == .update(display: "--"))
+      // Third f: first hyphen key was lowercase, so commit lowercase "f"
+      #expect(results[4] == .commit("f"))
+      #expect(engine.isEmpty == true)
+    }
+
+    @Test("Triple f after word escapes with uppercase", arguments: [InputMode.tl, InputMode.poj])
+    func tripleFUppercaseAfterWordEscapes(mode: InputMode) {
+      let engine = TelexEngine(inputMode: mode)
+      let results = processString("siFff", engine: engine)
+
+      #expect(results.count == 5)
+      #expect(results[0] == .update(display: "s"))
+      #expect(results[1] == .update(display: "si"))
+      // First F: commitAndUpdate commits "si" and starts composing with "F" -> "-"
+      #expect(results[2] == .commitAndUpdate("si", "-"))
+      // Second f: already composing with "F", so makes "Ff" -> "--"
+      #expect(results[3] == .update(display: "--"))
+      // Third f: first hyphen key was uppercase, so commit uppercase "F"
+      #expect(results[4] == .commit("F"))
+      #expect(engine.isEmpty == true)
+    }
+
+    @Test("Four fs after word escapes and restarts", arguments: [InputMode.tl, InputMode.poj])
+    func fourFsAfterWordEscapesAndRestarts(mode: InputMode) {
+      let engine = TelexEngine(inputMode: mode)
+      let results = processString("siffff", engine: engine)
+
+      #expect(results.count == 6)
+      #expect(results[0] == .update(display: "s"))
+      #expect(results[1] == .update(display: "si"))
+      // First f: commitAndUpdate commits "si" and starts composing with "f" -> "-"
+      #expect(results[2] == .commitAndUpdate("si", "-"))
+      // Second f: makes "ff" -> "--"
+      #expect(results[3] == .update(display: "--"))
+      // Third f: first hyphen key was lowercase, so commit lowercase "f"
+      #expect(results[4] == .commit("f"))
+      // Fourth f: engine empty, starts fresh with "f" -> "-"
+      #expect(results[5] == .update(display: "-"))
+      #expect(engine.isEmpty == false)
     }
   }
 
@@ -310,9 +432,12 @@ struct TelexEngineTests {
       let results = processString("huanfi.", engine: engine)
 
       #expect(results.count == 7)
-      #expect(results[4] == .commitAndProcess("huan", "f"))
-      #expect(results[5] == .update(display: "i"))
-      #expect(results[6] == .commitAndPassthrough("i"))
+      // f: commitAndUpdate commits "huan" and starts composing with "f" -> "-"
+      #expect(results[4] == .commitAndUpdate("huan", "-"))
+      // i: continues composing with "fi" -> "-i"
+      #expect(results[5] == .update(display: "-i"))
+      // .: commits "-i" and passes through "."
+      #expect(results[6] == .commitAndPassthrough("-i"))
     }
 
     @Test("Multiple words separated by space")

@@ -421,6 +421,77 @@ struct TelexRulesTests {
     }
   }
 
+  @Suite("countTrailingHyphenKeys")
+  struct CountTrailingHyphenKeysTests {
+    @Test("Returns 0 for empty string")
+    func returnsZeroForEmptyString() {
+      #expect(TelexRules.countTrailingHyphenKeys("") == 0)
+    }
+
+    @Test("Returns 0 for string without trailing f")
+    func returnsZeroForStringWithoutTrailingF() {
+      #expect(TelexRules.countTrailingHyphenKeys("abc") == 0)
+      #expect(TelexRules.countTrailingHyphenKeys("a") == 0)
+      #expect(TelexRules.countTrailingHyphenKeys("test") == 0)
+    }
+
+    @Test("Returns 0 for string ending with non-f characters")
+    func returnsZeroForStringEndingWithNonF() {
+      #expect(TelexRules.countTrailingHyphenKeys("afz") == 0)
+      #expect(TelexRules.countTrailingHyphenKeys("ffx") == 0)
+    }
+
+    @Test("Counts single trailing f")
+    func countsSingleTrailingF() {
+      #expect(TelexRules.countTrailingHyphenKeys("f") == 1)
+      #expect(TelexRules.countTrailingHyphenKeys("af") == 1)
+      #expect(TelexRules.countTrailingHyphenKeys("testf") == 1)
+    }
+
+    @Test("Counts single trailing F")
+    func countsSingleTrailingUppercaseF() {
+      #expect(TelexRules.countTrailingHyphenKeys("F") == 1)
+      #expect(TelexRules.countTrailingHyphenKeys("aF") == 1)
+      #expect(TelexRules.countTrailingHyphenKeys("testF") == 1)
+    }
+
+    @Test("Counts double trailing f")
+    func countsDoubleTrailingF() {
+      #expect(TelexRules.countTrailingHyphenKeys("ff") == 2)
+      #expect(TelexRules.countTrailingHyphenKeys("aff") == 2)
+      #expect(TelexRules.countTrailingHyphenKeys("testff") == 2)
+    }
+
+    @Test("Counts double trailing F")
+    func countsDoubleTrailingUppercaseF() {
+      #expect(TelexRules.countTrailingHyphenKeys("FF") == 2)
+      #expect(TelexRules.countTrailingHyphenKeys("aFF") == 2)
+      #expect(TelexRules.countTrailingHyphenKeys("testFF") == 2)
+    }
+
+    @Test("Counts mixed case trailing fs")
+    func countsMixedCaseTrailingFs() {
+      #expect(TelexRules.countTrailingHyphenKeys("fF") == 2)
+      #expect(TelexRules.countTrailingHyphenKeys("Ff") == 2)
+      #expect(TelexRules.countTrailingHyphenKeys("afF") == 2)
+      #expect(TelexRules.countTrailingHyphenKeys("aFf") == 2)
+    }
+
+    @Test("Counts three or more trailing fs")
+    func countsThreeOrMoreTrailingFs() {
+      #expect(TelexRules.countTrailingHyphenKeys("fff") == 3)
+      #expect(TelexRules.countTrailingHyphenKeys("ffff") == 4)
+      #expect(TelexRules.countTrailingHyphenKeys("affff") == 4)
+    }
+
+    @Test("Stops at first non-f character")
+    func stopsAtFirstNonFCharacter() {
+      #expect(TelexRules.countTrailingHyphenKeys("fFfFfFfF") == 8)
+      #expect(TelexRules.countTrailingHyphenKeys("affFb") == 0)
+      #expect(TelexRules.countTrailingHyphenKeys("fffFfx") == 0)
+    }
+  }
+
   @Suite("Basic Syllable Test Cases from README")
   struct BasicSyllableTestCases {
     @Test("TL mode syllable transformations", arguments: SyllableTestCase.tlBasic)

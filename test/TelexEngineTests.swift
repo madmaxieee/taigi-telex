@@ -127,7 +127,33 @@ struct TelexEngineTests {
       #expect(results.count == 3)
       #expect(results[0] == .update(display: "a"))
       #expect(results[1] == .update(display: "á"))
-      #expect(results[2] == .commitAndProcess("a", "v"))
+      #expect(results[2] == .commit("av"))
+      #expect(engine.isEmpty == true)
+    }
+
+    @Test("Same tone key escapes and commits with other transform with TL mode")
+    func sameToneKeyEscapesWithOtherTransform() {
+      let engine = TelexEngine(inputMode: .tl)
+      let results = processString("zavv", engine: engine)
+
+      #expect(results.count == 4)
+      #expect(results[0] == .update(display: "ts"))
+      #expect(results[1] == .update(display: "tsa"))
+      #expect(results[2] == .update(display: "tsá"))
+      #expect(results[3] == .commit("tsav"))
+      #expect(engine.isEmpty == true)
+    }
+
+    @Test("Same tone key escapes and commits with other transform with POJ mode")
+    func sameToneKeyEscapesWithOtherTransformPOJ() {
+      let engine = TelexEngine(inputMode: .poj)
+      let results = processString("zavv", engine: engine)
+
+      #expect(results.count == 4)
+      #expect(results[0] == .update(display: "ch"))
+      #expect(results[1] == .update(display: "cha"))
+      #expect(results[2] == .update(display: "chá"))
+      #expect(results[3] == .commit("chav"))
       #expect(engine.isEmpty == true)
     }
   }

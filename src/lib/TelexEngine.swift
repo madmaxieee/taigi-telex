@@ -45,11 +45,12 @@ public class TelexEngine {
       return .update(display: newDisplay)
     }
 
-    // Same tone key = escape (commit raw without tone, process char as new)
+    // Same tone key = escape (commit current syllable and the raw tone key)
     if endsWithTone, isToneChar, currentRaw.last == char {
       let rawToCommit = String(currentRaw.dropLast())
+      let displayToCommit = TelexRules.transform(rawToCommit, mode: inputMode) + String(char)
       state = .empty
-      return .commitAndProcess(rawToCommit, char)
+      return .commit(displayToCommit)
     }
 
     // Same consonant key = escape (commit raw consonant, don't process char)

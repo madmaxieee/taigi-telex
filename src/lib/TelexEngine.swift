@@ -60,14 +60,12 @@ public class TelexEngine {
     }
 
     // POJ: Triple n or o = escape (commit double vowel as escaped, process char)
-    if inputMode == .poj {
-      if TelexRules.isDoubleTransformEscape(currentRaw, char: char, mode: inputMode) {
-        let escapedRaw = String(currentRaw.dropLast(2))
-        let lastTwo = String(currentRaw.suffix(2))
-        let display = TelexRules.transform(escapedRaw, mode: inputMode) + lastTwo
-        state = .empty
-        return .commit(display)
-      }
+    if TelexRules.isDoubleTransformEscape(currentRaw, char: char, mode: inputMode) {
+      let escapedRaw = String(currentRaw.dropLast(2))
+      let lastTwo = String(currentRaw.suffix(2))
+      let display = TelexRules.transform(escapedRaw, mode: inputMode) + lastTwo
+      state = .empty
+      return .commit(display)
     }
 
     // Hyphen key (f) = commit current and process f as new input

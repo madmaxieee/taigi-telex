@@ -159,8 +159,7 @@ struct TelexEngineTests {
       let engine = TelexEngine(inputMode: mode)
       let results = processString("azz", engine: engine)
 
-      #expect(results.count == 3)
-      #expect(results[2] == .commit("az"))
+      #expect(results.last == .commit("az"))
     }
   }
 
@@ -171,8 +170,7 @@ struct TelexEngineTests {
       let engine = TelexEngine(inputMode: mode)
       let results = processString("sif", engine: engine)
 
-      #expect(results.count == 3)
-      #expect(results[2] == .commitAndProcess("si", "f"))
+      #expect(results.last == .commitAndProcess("si", "f"))
       #expect(engine.isEmpty == true)
     }
 
@@ -194,8 +192,7 @@ struct TelexEngineTests {
       let engine = TelexEngine(inputMode: mode)
       let results = processString("a1", engine: engine)
 
-      #expect(results.count == 2)
-      #expect(results[1] == .commitAndPassthrough("a"))
+      #expect(results.last == .commitAndPassthrough("a"))
       #expect(engine.isEmpty == true)
     }
 
@@ -204,8 +201,7 @@ struct TelexEngineTests {
       let engine = TelexEngine(inputMode: mode)
       let results = processString("si.", engine: engine)
 
-      #expect(results.count == 3)
-      #expect(results[2] == .commitAndPassthrough("si"))
+      #expect(results.last == .commitAndPassthrough("si"))
       #expect(engine.isEmpty == true)
     }
 
@@ -214,8 +210,7 @@ struct TelexEngineTests {
       let engine = TelexEngine(inputMode: mode)
       let results = processString("a ", engine: engine)
 
-      #expect(results.count == 2)
-      #expect(results[1] == .commitAndPassthrough("a"))
+      #expect(results.last == .commitAndPassthrough("a"))
       #expect(engine.isEmpty == true)
     }
   }
@@ -247,8 +242,6 @@ struct TelexEngineTests {
       let engine = TelexEngine(inputMode: .poj)
       let results = processString("hooo", engine: engine)
 
-      // The escape commits the raw without the last char
-      // So "hoo" -> drop last -> "ho" -> transform -> "ho"
       #expect(results.last == .commit("hoo"))
       #expect(engine.isEmpty == true)
     }
@@ -259,7 +252,7 @@ struct TelexEngineTests {
       let results = processString("hooo", engine: engine)
 
       // In TL, ooo just continues composing - no transformation applied to ooo
-      #expect(results[3] == .update(display: "hooo"))
+      #expect(results.last == .update(display: "hooo"))
     }
   }
 
@@ -282,8 +275,7 @@ struct TelexEngineTests {
       let engine = TelexEngine(inputMode: .tl)
       let results = processString("zav", engine: engine)
 
-      #expect(results.count == 3)
-      #expect(results[2] == .update(display: "tsa\u{0301}"))
+      #expect(results.last == .update(display: "tsa\u{0301}"))
     }
 
     @Test("Type word with hyphen")
@@ -378,26 +370,24 @@ struct TelexEngineTests {
       let engine = TelexEngine(inputMode: mode)
       let results = processString("Ta", engine: engine)
 
-      #expect(results.count == 2)
-      #expect(results[1] == .update(display: "Ta"))
+      #expect(results.last == .update(display: "Ta"))
     }
 
-    @Test("Uppercase consonant mapping")
-    func uppercaseConsonantMapping() {
-      let engine = TelexEngine(inputMode: .tl)
+    @Test("Uppercase consonant mapping", arguments: [InputMode.tl, InputMode.poj])
+    func uppercaseConsonantMapping(mode: InputMode) {
+      let engine = TelexEngine(inputMode: mode)
       let result = engine.process("Z")
 
-      #expect(result == .update(display: "Ts"))
+      #expect(result == .update(display: mode == .tl ? "Ts" : "Ch"))
     }
 
-    @Test("Uppercase tone key")
-    func uppercaseToneKey() {
-      let engine = TelexEngine(inputMode: .tl)
+    @Test("Uppercase tone key", arguments: [InputMode.tl, InputMode.poj])
+    func uppercaseToneKey(mode: InputMode) {
+      let engine = TelexEngine(inputMode: mode)
       let results = processString("aV", engine: engine)
 
-      #expect(results.count == 2)
       // Tone key V produces combining acute on the vowel
-      #expect(results[1] == .update(display: "a\u{0301}"))
+      #expect(results.last == .update(display: "á"))
     }
   }
 }

@@ -58,14 +58,14 @@ public class TelexEngine {
       return .commit(currentRaw)
     }
 
-    // POJ: Triple vowel key = escape (commit double vowel as escaped, process char)
+    // POJ: Triple n or o = escape (commit double vowel as escaped, process char)
     if inputMode == .poj {
       if TelexRules.isDoubleTransformEscape(currentRaw, char: char, mode: inputMode) {
-        // Commit the first two (which will be transformed to nn or oo)
-        let escapedRaw = String(currentRaw.dropLast())
-        let display = TelexRules.transform(escapedRaw, mode: inputMode)
+        let escapedRaw = String(currentRaw.dropLast(2))
+        let lastTwo = String(currentRaw.suffix(2))
+        let display = TelexRules.transform(escapedRaw, mode: inputMode) + lastTwo
         state = .empty
-        return .commitAndProcess(display, char)
+        return .commit(display)
       }
     }
 

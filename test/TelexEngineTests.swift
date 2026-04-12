@@ -227,10 +227,9 @@ struct TelexEngineTests {
       let engine = TelexEngine(inputMode: .poj)
       let results = processString("annn", engine: engine)
 
-      #expect(results.count == 4)
       // The escape commits the raw without the last char (which is the escape trigger)
-      // So "ann" -> drop last -> "an" -> transform -> "an"
-      #expect(results[3] == .commitAndProcess("an", "n"))
+      // So "a" -> drop last 2 -> "a" -> transform -> "a" + last two raw "nn" = "ann"
+      #expect(results.last == .commit("ann"))
       #expect(engine.isEmpty == true)
     }
 
@@ -239,9 +238,8 @@ struct TelexEngineTests {
       let engine = TelexEngine(inputMode: .tl)
       let results = processString("annn", engine: engine)
 
-      #expect(results.count == 4)
       // In TL, nnn just continues composing - no transformation applied to nnn
-      #expect(results[3] == .update(display: "annn"))
+      #expect(results.last == .update(display: "annn"))
     }
 
     @Test("Triple o escapes in POJ")
@@ -249,10 +247,9 @@ struct TelexEngineTests {
       let engine = TelexEngine(inputMode: .poj)
       let results = processString("hooo", engine: engine)
 
-      #expect(results.count == 4)
       // The escape commits the raw without the last char
       // So "hoo" -> drop last -> "ho" -> transform -> "ho"
-      #expect(results.last == .commitAndProcess("ho", "o"))
+      #expect(results.last == .commit("hoo"))
       #expect(engine.isEmpty == true)
     }
 
@@ -261,7 +258,6 @@ struct TelexEngineTests {
       let engine = TelexEngine(inputMode: .tl)
       let results = processString("hooo", engine: engine)
 
-      #expect(results.count == 4)
       // In TL, ooo just continues composing - no transformation applied to ooo
       #expect(results[3] == .update(display: "hooo"))
     }

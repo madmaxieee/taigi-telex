@@ -4,17 +4,6 @@ Tâi-gí Telex is a Taiwanese input method with Telex-style tone keys for macOS.
 
 **Live Demo:** https://telex.kahiok.com
 
-## Input Modes
-
-The input method provides two modes that you can switch between using **Caps Lock** or by selecting from the input menu:
-
-| Mode                | Description                                 |
-| ------------------- | ------------------------------------------- |
-| **TL (Tâi-lô)**     | Modern standard romanization used in Taiwan |
-| **POJ (Pe̍h-ōe-jī)** | Classic missionary romanization system      |
-
-Both modes share the same tone marking keys. The main differences are in consonant mappings and POJ-specific vowel features.
-
 ## User Guide
 
 ### Download & Install

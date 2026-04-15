@@ -129,50 +129,127 @@ public enum TelexRules {
 
   public static func findTonePosition(_ syllable: String, mode: InputMode) -> Int {
     let lower = syllable.lowercased()
+    let oWithDot = "o\u{0358}"
 
-    // Mode-specific exceptions
-    switch mode {
-    case .tl:
-      // TL exceptions: iu -> mark on u, ui -> mark on i
-      if let range = lower.range(of: "iu") {
-        let uIndex = lower.index(range.lowerBound, offsetBy: 1)
-        return syllable.distance(from: syllable.startIndex, to: uIndex)
+    // Iterate from the end to find the last vowel cluster
+    var i = lower.count - 1
+    var clusterEnd = -1
+    var clusterStart = -1
+
+    while i >= 0 {
+      let index = lower.index(lower.startIndex, offsetBy: i)
+      let substring = String(lower[index...])
+
+      // Check for o͘ in POJ mode
+      if mode == .poj && substring.hasPrefix(oWithDot) {
+        if clusterEnd != -1 {
+          // We already have a vowel cluster after o͘
+          // o͘ acts as a separator, process the cluster we found
+          break
+        }
+        // o͘ is the cluster itself (no vowels after it)
+        return i
       }
-      if let range = lower.range(of: "ui") {
-        let iIndex = lower.index(range.lowerBound, offsetBy: 1)
-        return syllable.distance(from: syllable.startIndex, to: iIndex)
+
+      let char = lower[index]
+
+      if "aeiou".contains(char) {
+        if clusterEnd == -1 {
+          // First vowel found from the end - this is the end of the cluster
+          clusterEnd = i
+        }
+        clusterStart = i
+        // Continue to find the head of the cluster
+      } else if clusterEnd != -1 {
+        // We've found the end of the cluster and now hit a non-vowel
+        // The cluster is complete
+        break
       }
-    case .poj:
-      // POJ exceptions: eo -> mark on e, oe -> mark on o
-      if let range = lower.range(of: "eo") {
-        let eIndex = range.lowerBound
-        return syllable.distance(from: syllable.startIndex, to: eIndex)
-      }
-      if let range = lower.range(of: "oe") {
-        let oIndex = range.lowerBound
-        return syllable.distance(from: syllable.startIndex, to: oIndex)
-      }
+
+      i -= 1
     }
 
-    let vowelPriority = mode == .tl ? vowelPriorityTL : vowelPriorityPOJ
-    for vowel in vowelPriority {
-      if let range = lower.range(of: vowel) {
-        return syllable.distance(from: syllable.startIndex, to: range.lowerBound)
+    // If we found a vowel cluster, determine the tone position within it
+    if clusterStart != -1 && clusterEnd != -1 {
+      // Build cluster text by iterating forward through the cluster
+      var clusterText = ""
+      var pos = clusterStart
+      while pos <= clusterEnd {
+        let idx = lower.index(lower.startIndex, offsetBy: pos)
+        clusterText.append(lower[idx])
+        pos += 1
       }
+
+      // Handle exceptions based on cluster length and content
+      if clusterText.count == 2 {
+        switch mode {
+        case .tl:
+          if clusterText == "iu" {
+            return clusterStart + 1
+          }
+          if clusterText == "ui" {
+            return clusterStart + 1
+          }
+        case .poj:
+          if clusterText == "eo" {
+            return clusterStart
+          }
+          if clusterText == "oe" {
+            return clusterStart
+          }
+        }
+      }
+
+      // Apply priority heuristic within the cluster
+      let vowelPriority = mode == .tl ? vowelPriorityTL : vowelPriorityPOJ
+      for vowel in vowelPriority {
+        if let range = clusterText.range(of: vowel) {
+          let offset = clusterText.distance(from: clusterText.startIndex, to: range.lowerBound)
+          return clusterStart + offset
+        }
+      }
+
+      // Fallback: return the start of the cluster
+      return clusterStart
     }
 
-    // Syllabic consonants (m, ng) can function as syllable nucleus
-    // when no true vowel is present. Check for ng first (higher priority),
-    // then check for m.
-    if let range = lower.range(of: "ng") {
-      return syllable.distance(from: syllable.startIndex, to: range.lowerBound)
-    }
-    if let range = lower.range(of: "m") {
-      return syllable.distance(from: syllable.startIndex, to: range.lowerBound)
+    // No vowel cluster found, look for syllabic consonants (ng or m)
+    // Search backwards for the last occurrence
+    var lastNgPos = -1
+    var lastMPos = -1
+
+    i = lower.count - 1
+    while i >= 0 {
+      let index = lower.index(lower.startIndex, offsetBy: i)
+      let char = lower[index]
+
+      if char == "m" {
+        // Check if this 'm' is part of an 'ng' (preceded by 'n' at position i-1)
+        let isPartOfNg = (i > 0) && (lower[lower.index(lower.startIndex, offsetBy: i - 1)] == "n")
+        if !isPartOfNg {
+          lastMPos = i
+        }
+      } else if char == "n" && i < lower.count - 1 {
+        // Check if this 'n' is followed by 'g' (forms 'ng')
+        let nextChar = lower[lower.index(after: index)]
+        if nextChar == "g" {
+          lastNgPos = i
+        }
+      }
+
+      i -= 1
     }
 
-    // No vowel or syllabic consonant found
-    return -1
+    // Return the last occurrence (the larger position, or either if equal)
+    if lastMPos > lastNgPos {
+      return lastMPos
+    }
+    if lastNgPos > lastMPos {
+      return lastNgPos
+    }
+
+    // They're equal - return either (or -1 if both are -1)
+    return lastNgPos
   }
 
   public static func isDoubleTransformEscape(_ input: String, char: Character, mode: InputMode)

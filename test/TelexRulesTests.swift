@@ -98,38 +98,34 @@ struct TelexRulesTests {
   struct ApplyDoubleVowelMappingTests {
     @Test("nn to superscript n")
     func nnToSuperscriptN() {
-      let superscriptN = "\u{207F}"
-      #expect(TelexRules.applyDoubleVowelMapping("nn") == superscriptN)
-      #expect(TelexRules.applyDoubleVowelMapping("NN") == superscriptN)
-      #expect(TelexRules.applyDoubleVowelMapping("Nn") == superscriptN)
-      #expect(TelexRules.applyDoubleVowelMapping("nN") == superscriptN)
+      #expect(TelexRules.applyDoubleVowelMapping("nn") == "ⁿ")
+      #expect(TelexRules.applyDoubleVowelMapping("NN") == "ⁿ")
+      #expect(TelexRules.applyDoubleVowelMapping("Nn") == "ⁿ")
+      #expect(TelexRules.applyDoubleVowelMapping("nN") == "ⁿ")
     }
 
     @Test("nn in words")
     func nnInWords() {
-      let superscriptN = "\u{207F}"
-      #expect(TelexRules.applyDoubleVowelMapping("ann") == "a" + superscriptN)
-      #expect(TelexRules.applyDoubleVowelMapping("enn") == "e" + superscriptN)
-      #expect(TelexRules.applyDoubleVowelMapping("inn") == "i" + superscriptN)
-      #expect(TelexRules.applyDoubleVowelMapping("onn") == "o" + superscriptN)
-      #expect(TelexRules.applyDoubleVowelMapping("unn") == "u" + superscriptN)
+      #expect(TelexRules.applyDoubleVowelMapping("ann") == "aⁿ")
+      #expect(TelexRules.applyDoubleVowelMapping("enn") == "eⁿ")
+      #expect(TelexRules.applyDoubleVowelMapping("inn") == "iⁿ")
+      #expect(TelexRules.applyDoubleVowelMapping("onn") == "oⁿ")
+      #expect(TelexRules.applyDoubleVowelMapping("unn") == "uⁿ")
     }
 
     @Test("oo to o with combining dot")
     func ooToODot() {
-      let oWithDot = "o\u{0358}"
-      #expect(TelexRules.applyDoubleVowelMapping("oo") == oWithDot)
-      #expect(TelexRules.applyDoubleVowelMapping("OO") == "O\u{0358}")
-      #expect(TelexRules.applyDoubleVowelMapping("Oo") == "O\u{0358}")
-      #expect(TelexRules.applyDoubleVowelMapping("oO") == oWithDot)
+      #expect(TelexRules.applyDoubleVowelMapping("oo") == "o͘")
+      #expect(TelexRules.applyDoubleVowelMapping("OO") == "O͘")
+      #expect(TelexRules.applyDoubleVowelMapping("Oo") == "O͘")
+      #expect(TelexRules.applyDoubleVowelMapping("oO") == "o͘")
     }
 
     @Test("oo in words")
     func ooInWords() {
-      let oWithDot = "o\u{0358}"
-      #expect(TelexRules.applyDoubleVowelMapping("hoo") == "h" + oWithDot)
-      #expect(TelexRules.applyDoubleVowelMapping("chhoo") == "chh" + oWithDot)
-      #expect(TelexRules.applyDoubleVowelMapping("boo") == "b" + oWithDot)
+      #expect(TelexRules.applyDoubleVowelMapping("hoo") == "ho͘")
+      #expect(TelexRules.applyDoubleVowelMapping("chhoo") == "chho͘")
+      #expect(TelexRules.applyDoubleVowelMapping("boo") == "bo͘")
     }
 
     @Test("No double vowel characters")
@@ -141,11 +137,9 @@ struct TelexRulesTests {
 
     @Test("Mixed content")
     func mixedContent() {
-      let superscriptN = "\u{207F}"
-      let oWithDot = "o\u{0358}"
       // Both nn and oo in same word
-      #expect(TelexRules.applyDoubleVowelMapping("oonn") == oWithDot + superscriptN)
-      #expect(TelexRules.applyDoubleVowelMapping("nno") == superscriptN + "o")
+      #expect(TelexRules.applyDoubleVowelMapping("oonn") == "o͘ⁿ")
+      #expect(TelexRules.applyDoubleVowelMapping("nno") == "ⁿo")
     }
   }
 
@@ -153,33 +147,33 @@ struct TelexRulesTests {
   struct ApplyToneMarkTests {
     @Test("Simple tone marks", arguments: [InputMode.tl, InputMode.poj])
     func toneMarks(mode: InputMode) {
-      #expect(TelexRules.applyToneMark("av", mode: mode) == "a\u{0301}")  // 2nd tone
-      #expect(TelexRules.applyToneMark("ay", mode: mode) == "a\u{0300}")  // 3rd tone
-      #expect(TelexRules.applyToneMark("ad", mode: mode) == "a\u{0302}")  // 5th tone
-      #expect(TelexRules.applyToneMark("aw", mode: mode) == "a\u{0304}")  // 7th tone
-      #expect(TelexRules.applyToneMark("ax", mode: mode) == "a\u{030D}")  // 8th tone
-      #expect(TelexRules.applyToneMark("aq", mode: mode) == "a\u{030B}")  // 9th tone
+      #expect(TelexRules.applyToneMark("av", mode: mode) == "á")  // 2nd tone
+      #expect(TelexRules.applyToneMark("ay", mode: mode) == "à")  // 3rd tone
+      #expect(TelexRules.applyToneMark("ad", mode: mode) == "â")  // 5th tone
+      #expect(TelexRules.applyToneMark("aw", mode: mode) == "ā")  // 7th tone
+      #expect(TelexRules.applyToneMark("ax", mode: mode) == "a̍")  // 8th tone
+      #expect(TelexRules.applyToneMark("aq", mode: mode) == "a̋")  // 9th tone
     }
 
     @Test("Uppercase tone marks", arguments: [InputMode.tl, InputMode.poj])
     func tlUppercaseToneMarks(mode: InputMode) {
-      #expect(TelexRules.applyToneMark("AV", mode: mode) == "A\u{0301}")
-      #expect(TelexRules.applyToneMark("AY", mode: mode) == "A\u{0300}")
-      #expect(TelexRules.applyToneMark("AD", mode: mode) == "A\u{0302}")
+      #expect(TelexRules.applyToneMark("AV", mode: mode) == "Á")
+      #expect(TelexRules.applyToneMark("AY", mode: mode) == "À")
+      #expect(TelexRules.applyToneMark("AD", mode: mode) == "Â")
     }
 
     @Test("Tone marks on different vowels", arguments: [InputMode.tl, InputMode.poj])
     func toneMarksOnVowels(mode: InputMode) {
-      #expect(TelexRules.applyToneMark("ev", mode: mode) == "e\u{0301}")
-      #expect(TelexRules.applyToneMark("iv", mode: mode) == "i\u{0301}")
-      #expect(TelexRules.applyToneMark("ov", mode: mode) == "o\u{0301}")
-      #expect(TelexRules.applyToneMark("uv", mode: mode) == "u\u{0301}")
+      #expect(TelexRules.applyToneMark("ev", mode: mode) == "é")
+      #expect(TelexRules.applyToneMark("iv", mode: mode) == "í")
+      #expect(TelexRules.applyToneMark("ov", mode: mode) == "ó")
+      #expect(TelexRules.applyToneMark("uv", mode: mode) == "ú")
     }
 
     @Test("Tone marks on syllabic consonants", arguments: [InputMode.tl, InputMode.poj])
     func toneMarksOnSyllabicConsonants(mode: InputMode) {
-      #expect(TelexRules.applyToneMark("mv", mode: mode) == "m\u{0301}")
-      #expect(TelexRules.applyToneMark("ngv", mode: mode) == "n\u{0301}g")
+      #expect(TelexRules.applyToneMark("mv", mode: mode) == "ḿ")
+      #expect(TelexRules.applyToneMark("ngv", mode: mode) == "ńg")
     }
   }
 
@@ -251,10 +245,9 @@ struct TelexRulesTests {
 
       @Test("POJ priority: o͘ > a > e > o > u > i")
       func pojVowelPriority() {
-        // o͘ has highest priority
-        let oWithDot = "o\u{0358}"
-        #expect(TelexRules.findTonePosition(oWithDot + "a", mode: .poj) == 0)
-        #expect(TelexRules.findTonePosition("a" + oWithDot, mode: .poj) == 1)
+        // o͘ has highest priority when in the same cluster
+        #expect(TelexRules.findTonePosition("o͘", mode: .poj) == 0)
+        #expect(TelexRules.findTonePosition("ao͘", mode: .poj) == 1)
 
         // all the usual vowels follow the same priority as TL
         #expect(TelexRules.findTonePosition("ai", mode: .poj) == 0)
@@ -266,6 +259,46 @@ struct TelexRulesTests {
         // there is no "ue" in POJ
 
         #expect(TelexRules.findTonePosition("io", mode: .poj) == 1)
+      }
+    }
+
+    @Suite("Multiple Vowel Clusters")
+    struct MultipleClustersTests {
+      @Test("TL mode: tone on last vowel cluster")
+      func tlMultipleClusters() {
+        // taigi: t(0)a(1)i(2)g(3)i(4) -> clusters "ai" and "i", tone on last "i" at 4
+        #expect(TelexRules.findTonePosition("taigi", mode: .tl) == 4)
+        // haksa: h(0)a(1)k(2)s(3)a(4) -> clusters "a" and "a", tone on last "a" at 4
+        #expect(TelexRules.findTonePosition("haksa", mode: .tl) == 4)
+        // bunhua: b(0)u(1)n(2)h(3)u(4)a(5) -> clusters "u" and "ua", tone on "a" at 5 (a > u)
+        #expect(TelexRules.findTonePosition("bunhua", mode: .tl) == 5)
+        // taiwan: t(0)a(1)i(2)n(3)a(4)n(5) -> clusters "ai" and "a", tone on last "a" at 4
+        #expect(TelexRules.findTonePosition("tainan", mode: .tl) == 4)
+        // sengli: s(0)e(1)n(2)g(3)l(4)i(5) -> clusters "e" and "i", tone on "i" at 5
+        #expect(TelexRules.findTonePosition("sengli", mode: .tl) == 5)
+      }
+
+      @Test("POJ mode with o͘: separate clusters")
+      func pojMultipleClusters() {
+        // cho͘a: c(0)h(1)o͘(2)a(3) -> clusters "o͘" and "a", tone on "a" at 3
+        let chooa = "cho͘a"
+        #expect(TelexRules.findTonePosition(chooa, mode: .poj) == 3)
+
+        // ho͘e: h(0)o͘(1)e(2) -> clusters "o͘" and "e", tone on "e" at 2
+        let hooe = "ho͘e"
+        #expect(TelexRules.findTonePosition(hooe, mode: .poj) == 2)
+
+        // ko͘ai: k(0)o͘(1)a(2)i(3) -> clusters "o͘" and "ai", tone on "a" at 2 (a > i)
+        let kooai = "ko͘ai"
+        #expect(TelexRules.findTonePosition(kooai, mode: .poj) == 2)
+
+        // pho͘an: p(0)h(1)o͘(2)a(3)n(4) -> clusters "o͘" and "a", tone on "a" at 3
+        let phooan = "pho͘an"
+        #expect(TelexRules.findTonePosition(phooan, mode: .poj) == 3)
+
+        // cho͘i: c(0)h(1)o͘(2)i(3) -> clusters "o͘" and "i", tone on "i" at 3
+        let chooi = "cho͘i"
+        #expect(TelexRules.findTonePosition(chooi, mode: .poj) == 3)
       }
     }
 
@@ -296,6 +329,17 @@ struct TelexRulesTests {
       func syllabicM(mode: InputMode) {
         #expect(TelexRules.findTonePosition("m", mode: mode) == 0)
         #expect(TelexRules.findTonePosition("hm", mode: mode) == 1)
+      }
+
+      @Test("Last occurrence of ng or m", arguments: [InputMode.tl, InputMode.poj])
+      func lastSyllabicConsonant(mode: InputMode) {
+        // Last ng should be chosen
+        #expect(TelexRules.findTonePosition("hng", mode: mode) == 1)
+        // Last m should be chosen
+        #expect(TelexRules.findTonePosition("hngm", mode: mode) == 3)
+        // When m follows ng, m is last
+        #expect(TelexRules.findTonePosition("ngm", mode: mode) == 2)
+        #expect(TelexRules.findTonePosition("pngm", mode: mode) == 3)
       }
     }
   }

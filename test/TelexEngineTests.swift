@@ -221,7 +221,9 @@ struct TelexEngineTests {
       #expect(engine.isEmpty == false)
     }
 
-    @Test("Triple lowercase hyphen escapes and commits lowercase f", arguments: [InputMode.tl, InputMode.poj])
+    @Test(
+      "Triple lowercase hyphen escapes and commits lowercase f",
+      arguments: [InputMode.tl, InputMode.poj])
     func tripleLowercaseHyphenEscapes(mode: InputMode) {
       let engine = TelexEngine(inputMode: mode)
       let results = processString("fff", engine: engine)
@@ -233,7 +235,9 @@ struct TelexEngineTests {
       #expect(engine.isEmpty == true)
     }
 
-    @Test("Triple uppercase hyphen escapes and commits uppercase F", arguments: [InputMode.tl, InputMode.poj])
+    @Test(
+      "Triple uppercase hyphen escapes and commits uppercase F",
+      arguments: [InputMode.tl, InputMode.poj])
     func tripleUppercaseHyphenEscapes(mode: InputMode) {
       let engine = TelexEngine(inputMode: mode)
       let results = processString("Fff", engine: engine)
@@ -245,7 +249,9 @@ struct TelexEngineTests {
       #expect(engine.isEmpty == true)
     }
 
-    @Test("Mixed case triple hyphen commits based on first key case", arguments: [InputMode.tl, InputMode.poj])
+    @Test(
+      "Mixed case triple hyphen commits based on first key case",
+      arguments: [InputMode.tl, InputMode.poj])
     func mixedCaseTripleHyphenEscapes(mode: InputMode) {
       let engine = TelexEngine(inputMode: mode)
 

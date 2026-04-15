@@ -34,11 +34,8 @@ public class TelexEngine {
   }
 
   private func handleComposingState(_ char: Character, currentRaw: String) -> TelexResult {
-    let endsWithTone = TelexKeys.isToneKey(currentRaw.last)
-    let isToneChar = TelexKeys.isToneKey(char)
-
     // Different tone key = override the tone
-    if endsWithTone, isToneChar, currentRaw.last != char {
+    if TelexRules.isToneOverride(currentRaw, char: char) {
       let newRaw = String(currentRaw.dropLast()) + String(char)
       let newDisplay = TelexRules.transform(newRaw, mode: inputMode)
       state = .composing(raw: newRaw, display: newDisplay)
@@ -46,7 +43,7 @@ public class TelexEngine {
     }
 
     // Same tone key = escape (commit current syllable and the raw tone key)
-    if endsWithTone, isToneChar, currentRaw.last == char {
+    if TelexRules.isToneEscape(currentRaw, char: char) {
       let rawToCommit = String(currentRaw.dropLast())
       let displayToCommit = TelexRules.transform(rawToCommit, mode: inputMode) + String(char)
       state = .empty

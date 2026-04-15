@@ -267,6 +267,24 @@ public enum TelexRules {
     return count
   }
 
+  /// Check if input ends with a tone key and new char is a different tone key.
+  /// Used to determine if the current tone should be overridden.
+  public static func isToneOverride(_ input: String, char: Character) -> Bool {
+    guard let lastChar = input.last else { return false }
+    guard TelexKeys.isToneKey(lastChar) else { return false }
+    guard TelexKeys.isToneKey(char) else { return false }
+    return lastChar != char
+  }
+
+  /// Check if input ends with a tone key and new char is the same tone key.
+  /// Used to determine if we should commit and escape (escape current syllable and raw tone key).
+  public static func isToneEscape(_ input: String, char: Character) -> Bool {
+    guard let lastChar = input.last else { return false }
+    guard TelexKeys.isToneKey(lastChar) else { return false }
+    guard TelexKeys.isToneKey(char) else { return false }
+    return lastChar == char
+  }
+
   /// Check for tone position exception cases based on cluster content and input mode.
   private static func tonePositionForException(cluster: String, mode: InputMode, start: Int) -> Int? {
     switch mode {

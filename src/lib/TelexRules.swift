@@ -100,10 +100,9 @@ public enum TelexRules {
     let syllable = String(input.dropLast())
 
     // Find position to place tone mark
-    let position = findTonePosition(syllable, mode: mode)
-
-    // Only apply tone if we found a valid vowel position
-    guard position >= 0, position < syllable.count else {
+    guard let position = findTonePosition(syllable, mode: mode),
+      position < syllable.count
+    else {
       return input
     }
 
@@ -127,77 +126,52 @@ public enum TelexRules {
     return result
   }
 
-  public static func findTonePosition(_ syllable: String, mode: InputMode) -> Int {
+  public static func findTonePosition(_ syllable: String, mode: InputMode) -> Int? {
     let lower = syllable.lowercased()
     let oWithDot = "o\u{0358}"
 
     // Iterate from the end to find the last vowel cluster
-    var i = lower.count - 1
-    var clusterEnd = -1
-    var clusterStart = -1
+    var clusterEnd: Int? = nil
+    var clusterStart: Int? = nil
 
-    while i >= 0 {
-      let index = lower.index(lower.startIndex, offsetBy: i)
-      let substring = String(lower[index...])
+    for (offset, char) in lower.enumerated().reversed() {
+      let index = lower.index(lower.startIndex, offsetBy: offset)
 
       // Check for o͘ in POJ mode
-      if mode == .poj && substring.hasPrefix(oWithDot) {
-        if clusterEnd != -1 {
+      if mode == .poj && lower[index...].hasPrefix(oWithDot) {
+        if clusterEnd != nil {
           // We already have a vowel cluster after o͘
           // o͘ acts as a separator, process the cluster we found
           break
         }
         // o͘ is the cluster itself (no vowels after it)
-        return i
+        return offset
       }
 
-      let char = lower[index]
-
       if "aeiou".contains(char) {
-        if clusterEnd == -1 {
+        if clusterEnd == nil {
           // First vowel found from the end - this is the end of the cluster
-          clusterEnd = i
+          clusterEnd = offset
         }
-        clusterStart = i
+        clusterStart = offset
         // Continue to find the head of the cluster
-      } else if clusterEnd != -1 {
+      } else if clusterEnd != nil {
         // We've found the end of the cluster and now hit a non-vowel
         // The cluster is complete
         break
       }
-
-      i -= 1
     }
 
     // If we found a vowel cluster, determine the tone position within it
-    if clusterStart != -1 && clusterEnd != -1 {
-      // Build cluster text by iterating forward through the cluster
-      var clusterText = ""
-      var pos = clusterStart
-      while pos <= clusterEnd {
-        let idx = lower.index(lower.startIndex, offsetBy: pos)
-        clusterText.append(lower[idx])
-        pos += 1
-      }
+    if let start = clusterStart, let end = clusterEnd {
+      // Extract the vowel cluster as a substring
+      let startIdx = lower.index(lower.startIndex, offsetBy: start)
+      let endIdx = lower.index(lower.startIndex, offsetBy: end)
+      let clusterText = String(lower[startIdx...endIdx])
 
-      // Handle exceptions based on cluster length and content
-      if clusterText.count == 2 {
-        switch mode {
-        case .tl:
-          if clusterText == "iu" {
-            return clusterStart + 1
-          }
-          if clusterText == "ui" {
-            return clusterStart + 1
-          }
-        case .poj:
-          if clusterText == "eo" {
-            return clusterStart
-          }
-          if clusterText == "oe" {
-            return clusterStart
-          }
-        }
+      // Check for exception cases first
+      if let exceptionPos = tonePositionForException(cluster: clusterText, mode: mode, start: start) {
+        return exceptionPos
       }
 
       // Apply priority heuristic within the cluster
@@ -205,51 +179,49 @@ public enum TelexRules {
       for vowel in vowelPriority {
         if let range = clusterText.range(of: vowel) {
           let offset = clusterText.distance(from: clusterText.startIndex, to: range.lowerBound)
-          return clusterStart + offset
+          return start + offset
         }
       }
 
       // Fallback: return the start of the cluster
-      return clusterStart
+      return start
     }
 
     // No vowel cluster found, look for syllabic consonants (ng or m)
     // Search backwards for the last occurrence
-    var lastNgPos = -1
-    var lastMPos = -1
+    var lastNgPos: Int? = nil
+    var lastMPos: Int? = nil
 
-    i = lower.count - 1
-    while i >= 0 {
-      let index = lower.index(lower.startIndex, offsetBy: i)
-      let char = lower[index]
-
+    for (offset, char) in lower.enumerated().reversed() {
       if char == "m" {
-        // Check if this 'm' is part of an 'ng' (preceded by 'n' at position i-1)
-        let isPartOfNg = (i > 0) && (lower[lower.index(lower.startIndex, offsetBy: i - 1)] == "n")
+        // Check if this 'm' is part of an 'ng' (preceded by 'n' at position offset-1)
+        let isPartOfNg =
+          (offset > 0)
+          && (lower[lower.index(lower.startIndex, offsetBy: offset - 1)] == "n")
         if !isPartOfNg {
-          lastMPos = i
+          lastMPos = offset
         }
-      } else if char == "n" && i < lower.count - 1 {
+      } else if char == "n" && offset < lower.count - 1 {
         // Check if this 'n' is followed by 'g' (forms 'ng')
+        let index = lower.index(lower.startIndex, offsetBy: offset)
         let nextChar = lower[lower.index(after: index)]
         if nextChar == "g" {
-          lastNgPos = i
+          lastNgPos = offset
         }
       }
-
-      i -= 1
     }
 
     // Return the last occurrence (the larger position, or either if equal)
-    if lastMPos > lastNgPos {
-      return lastMPos
+    switch (lastMPos, lastNgPos) {
+    case (let m?, let n?):
+      return max(m, n)
+    case (let m?, nil):
+      return m
+    case (nil, let n?):
+      return n
+    case (nil, nil):
+      return nil
     }
-    if lastNgPos > lastMPos {
-      return lastNgPos
-    }
-
-    // They're equal - return either (or -1 if both are -1)
-    return lastNgPos
   }
 
   public static func isDoubleTransformEscape(_ input: String, char: Character, mode: InputMode)
@@ -293,5 +265,26 @@ public enum TelexRules {
       }
     }
     return count
+  }
+
+  /// Check for tone position exception cases based on cluster content and input mode.
+  private static func tonePositionForException(cluster: String, mode: InputMode, start: Int) -> Int? {
+    switch mode {
+    case .tl:
+      if cluster == "iu" {
+        return start + 1
+      }
+      if cluster == "ui" {
+        return start + 1
+      }
+    case .poj:
+      if cluster == "eo" {
+        return start
+      }
+      if cluster == "oe" {
+        return start
+      }
+    }
+    return nil
   }
 }

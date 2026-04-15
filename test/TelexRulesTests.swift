@@ -342,6 +342,28 @@ struct TelexRulesTests {
         #expect(TelexRules.findTonePosition("pngm", mode: mode) == 3)
       }
     }
+
+    @Suite("No Tone Position Found")
+    struct NoTonePositionTests {
+      @Test("Empty string returns nil", arguments: [InputMode.tl, InputMode.poj])
+      func emptyString(mode: InputMode) {
+        #expect(TelexRules.findTonePosition("", mode: mode) == nil)
+      }
+
+      @Test("Single consonant returns nil", arguments: [InputMode.tl, InputMode.poj])
+      func singleConsonant(mode: InputMode) {
+        #expect(TelexRules.findTonePosition("b", mode: mode) == nil)
+        #expect(TelexRules.findTonePosition("t", mode: mode) == nil)
+        #expect(TelexRules.findTonePosition("s", mode: mode) == nil)
+      }
+
+      @Test("Multiple consonants returns nil", arguments: [InputMode.tl, InputMode.poj])
+      func multipleConsonants(mode: InputMode) {
+        #expect(TelexRules.findTonePosition("br", mode: mode) == nil)
+        #expect(TelexRules.findTonePosition("tsh", mode: mode) == nil)
+        #expect(TelexRules.findTonePosition("xyz", mode: mode) == nil)
+      }
+    }
   }
 
   @Suite("isDoubleTransformEscape")

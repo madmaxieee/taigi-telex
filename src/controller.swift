@@ -159,8 +159,7 @@ class TaigiTelexInputController: IMKInputController {
       return false
     }
 
-    if case let .composing(raw, _) = engine.state {
-      let display = TelexRules.transform(raw, mode: engine.inputMode)
+    if case let .composing(_, display) = engine.state {
       client.insertText(
         display,
         replacementRange: NSRange(location: NSNotFound, length: NSNotFound),
@@ -232,8 +231,7 @@ class TaigiTelexInputController: IMKInputController {
   override func commitComposition(_ sender: Any!) {
     guard let client = sender as? IMKTextInput else { return }
 
-    if case let .composing(raw, _) = engine.state {
-      let display = TelexRules.transform(raw, mode: engine.inputMode)
+    if case let .composing(_, display) = engine.state {
       client.insertText(
         display,
         replacementRange: NSRange(location: NSNotFound, length: NSNotFound),

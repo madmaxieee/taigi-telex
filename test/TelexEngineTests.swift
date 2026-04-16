@@ -547,4 +547,50 @@ struct TelexEngineTests {
       #expect(results.last == .update(display: "á"))
     }
   }
+
+  @Suite("Tone Preservation After Composition")
+  struct TonePreservationAfterCompositionTests {
+    @Test(
+      "Continue composing after tone key preserves tone",
+      arguments: [
+        ("taidg", "tâig"),
+        ("taidng", "tâing"),
+        ("taiwg", "tāig"),
+        ("taivk", "táik"),
+        ("taidgiv", "tâigí"),
+      ])
+    func continueComposingAfterTonePreservesTone(input: String, expected: String) {
+      for mode in [InputMode.tl, InputMode.poj] {
+        let engine = TelexEngine(inputMode: mode)
+        let results = processString(input, engine: engine)
+        #expect(results.last == .update(display: expected))
+      }
+    }
+
+    @Test(
+      "Continue composing after tone with consonant mapping",
+      arguments: [InputMode.tl, InputMode.poj])
+    func continueComposingAfterToneWithConsonantMapping(mode: InputMode) {
+      let engine = TelexEngine(inputMode: mode)
+      let results = processString("zavk", engine: engine)
+
+      let expectedDisplay = mode == .tl ? "tsák" : "chák"
+      #expect(results.last == .update(display: expectedDisplay))
+    }
+
+    @Test(
+      "Continue composing after tone preserves display state",
+      arguments: [InputMode.tl, InputMode.poj])
+    func continueComposingAfterTonePreservesDisplayState(mode: InputMode) {
+      let engine = TelexEngine(inputMode: mode)
+      _ = processString("taidg", engine: engine)
+
+      if case let .composing(raw, display) = engine.state {
+        #expect(raw == "taidg")
+        #expect(display == "tâig")
+      } else {
+        Issue.record("Expected composing state, got \(engine.state)")
+      }
+    }
+  }
 }

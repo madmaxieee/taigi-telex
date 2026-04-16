@@ -90,38 +90,53 @@ public enum TelexRules {
   }
 
   public static func applyToneMark(_ input: String, mode: InputMode) -> String {
-    guard let lastChar = input.last,
-      let toneMark = toneMarks[lastChar]
-    else {
-      return input
-    }
+    var tonePositions: [(index: String.Index, mark: String)] = []
 
-    // Remove the tone key from the end
-    let syllable = String(input.dropLast())
-
-    // Find position to place tone mark
-    guard let position = findTonePosition(syllable, mode: mode),
-      position < syllable.count
-    else {
-      return input
-    }
-
-    // Check if the character at position is actually a vowel
-    let index = syllable.index(syllable.startIndex, offsetBy: position)
-    let targetChar = syllable[index].lowercased()
-    if mode == .tl {
-      if !validVowelsTL.contains(Character(targetChar)) {
-        return input
-      }
-    } else {
-      if !validVowelsPOJ.contains(Character(targetChar)) {
-        return input
+    for (offset, char) in input.enumerated() {
+      if let toneMark = toneMarks[char] {
+        tonePositions.append(
+          (index: input.index(input.startIndex, offsetBy: offset), mark: toneMark))
       }
     }
 
-    // Insert combining mark after the target character
-    var result = syllable
-    result.insert(contentsOf: toneMark, at: syllable.index(after: index))
+    if tonePositions.isEmpty {
+      return input
+    }
+
+    var result = ""
+    result.reserveCapacity(input.count)
+    var prevToneEnd = input.startIndex
+
+    for tonePos in tonePositions {
+      let segment = String(input[prevToneEnd..<tonePos.index])
+
+      if let position = findTonePosition(segment, mode: mode),
+        position < segment.count
+      {
+        let targetIndex = segment.index(segment.startIndex, offsetBy: position)
+        let targetChar = segment[targetIndex].lowercased()
+        let isValidVowel: Bool
+        if mode == .tl {
+          isValidVowel = validVowelsTL.contains(Character(targetChar))
+        } else {
+          isValidVowel = validVowelsPOJ.contains(Character(targetChar))
+        }
+
+        if isValidVowel {
+          var applied = segment
+          applied.insert(contentsOf: tonePos.mark, at: segment.index(after: targetIndex))
+          result += applied
+        } else {
+          result += segment
+        }
+      } else {
+        result += segment
+      }
+
+      prevToneEnd = input.index(after: tonePos.index)
+    }
+
+    result += String(input[prevToneEnd..<input.endIndex])
 
     return result
   }

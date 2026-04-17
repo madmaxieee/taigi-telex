@@ -1,7 +1,7 @@
 import Foundation
 
 public enum TelexRules {
-  public static let toneMarks: [Character: String] = [
+  public static let toneMarkByToneKey: [Character: String] = [
     "v": "\u{0301}",  // combining acute (2nd tone)
     "y": "\u{0300}",  // combining grave (3rd tone)
     "d": "\u{0302}",  // combining circumflex (5th tone)
@@ -43,11 +43,6 @@ public enum TelexRules {
 
   public static let vowelPriorityTL = ["a", "e", "o", "u", "i"]
   public static let vowelPriorityPOJ = ["o\u{0358}", "a", "e", "o", "u", "i"]  // o͘ has highest priority
-
-  public static let validVowelsTL: Set<Character> = ["a", "e", "i", "o", "u", "m", "n"]
-  public static let validVowelsPOJ: Set<Character> = [
-    "a", "e", "i", "o", "u", "m", "n", "o\u{0358}",
-  ]  // include o͘
 
   public static func transform(_ input: String, mode: InputMode) -> String {
     var result = input
@@ -93,7 +88,7 @@ public enum TelexRules {
     var tonePositions: [(index: String.Index, mark: String)] = []
 
     for (offset, char) in input.enumerated() {
-      if let toneMark = toneMarks[char] {
+      if let toneMark = toneMarkByToneKey[char] {
         tonePositions.append(
           (index: input.index(input.startIndex, offsetBy: offset), mark: toneMark))
       }
@@ -114,21 +109,9 @@ public enum TelexRules {
         position < segment.count
       {
         let targetIndex = segment.index(segment.startIndex, offsetBy: position)
-        let targetChar = segment[targetIndex].lowercased()
-        let isValidVowel: Bool
-        if mode == .tl {
-          isValidVowel = validVowelsTL.contains(Character(targetChar))
-        } else {
-          isValidVowel = validVowelsPOJ.contains(Character(targetChar))
-        }
-
-        if isValidVowel {
-          var applied = segment
-          applied.insert(contentsOf: tonePos.mark, at: segment.index(after: targetIndex))
-          result += applied
-        } else {
-          result += segment
-        }
+        var applied = segment
+        applied.insert(contentsOf: tonePos.mark, at: segment.index(after: targetIndex))
+        result += applied
       } else {
         result += segment
       }
@@ -185,7 +168,8 @@ public enum TelexRules {
       let clusterText = String(lower[startIdx...endIdx])
 
       // Check for exception cases first
-      if let exceptionPos = tonePositionForException(cluster: clusterText, mode: mode, start: start) {
+      if let exceptionPos = tonePositionForException(cluster: clusterText, mode: mode, start: start)
+      {
         return exceptionPos
       }
 
@@ -301,7 +285,8 @@ public enum TelexRules {
   }
 
   /// Check for tone position exception cases based on cluster content and input mode.
-  private static func tonePositionForException(cluster: String, mode: InputMode, start: Int) -> Int? {
+  private static func tonePositionForException(cluster: String, mode: InputMode, start: Int) -> Int?
+  {
     switch mode {
     case .tl:
       if cluster == "iu" {

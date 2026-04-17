@@ -10,7 +10,9 @@ struct TelexEngineEdgeCaseTests {
   @Suite("Hyphen Key Edge Cases")
   struct HyphenKeyEdgeCaseTests {
 
-    @Test("Five consecutive lowercase fs: escape then restart composing", arguments: [InputMode.tl, InputMode.poj])
+    @Test(
+      "Five consecutive lowercase fs: escape then restart composing",
+      arguments: [InputMode.tl, InputMode.poj])
     func fiveConsecutiveLowercaseFs(mode: InputMode) {
       let engine = TelexEngine(inputMode: mode)
       let results = processString("fffff", engine: engine)
@@ -24,7 +26,9 @@ struct TelexEngineEdgeCaseTests {
       #expect(engine.isEmpty == false)
     }
 
-    @Test("Five consecutive uppercase Fs: escape then restart composing", arguments: [InputMode.tl, InputMode.poj])
+    @Test(
+      "Five consecutive uppercase Fs: escape then restart composing",
+      arguments: [InputMode.tl, InputMode.poj])
     func fiveConsecutiveUppercaseFs(mode: InputMode) {
       let engine = TelexEngine(inputMode: mode)
       let results = processString("FFFFF", engine: engine)
@@ -38,7 +42,9 @@ struct TelexEngineEdgeCaseTests {
       #expect(engine.isEmpty == false)
     }
 
-    @Test("Alternating case fFfFf: escape on third then restart", arguments: [InputMode.tl, InputMode.poj])
+    @Test(
+      "Alternating case fFfFf: escape on third then restart",
+      arguments: [InputMode.tl, InputMode.poj])
     func alternatingCaseHyphenEscape(mode: InputMode) {
       let engine = TelexEngine(inputMode: mode)
       let results = processString("fFfFf", engine: engine)
@@ -52,7 +58,9 @@ struct TelexEngineEdgeCaseTests {
       #expect(engine.isEmpty == false)
     }
 
-    @Test("Alternating case FfFfF: escape on third then restart", arguments: [InputMode.tl, InputMode.poj])
+    @Test(
+      "Alternating case FfFfF: escape on third then restart",
+      arguments: [InputMode.tl, InputMode.poj])
     func alternatingCaseHyphenEscapeUppercase(mode: InputMode) {
       let engine = TelexEngine(inputMode: mode)
       let results = processString("FfFfF", engine: engine)
@@ -81,7 +89,9 @@ struct TelexEngineEdgeCaseTests {
       #expect(engine.isEmpty == true)
     }
 
-    @Test("sifff then backspace returns nil (engine empty after escape)", arguments: [InputMode.tl, InputMode.poj])
+    @Test(
+      "sifff then backspace returns nil (engine empty after escape)",
+      arguments: [InputMode.tl, InputMode.poj])
     func sifffThenBackspace(mode: InputMode) {
       let engine = TelexEngine(inputMode: mode)
       _ = processString("sifff", engine: engine)
@@ -91,7 +101,9 @@ struct TelexEngineEdgeCaseTests {
       #expect(result == nil)
     }
 
-    @Test("siff then backspace removes one f from double hyphen", arguments: [InputMode.tl, InputMode.poj])
+    @Test(
+      "siff then backspace removes one f from double hyphen",
+      arguments: [InputMode.tl, InputMode.poj])
     func siffThenBackspace(mode: InputMode) {
       let engine = TelexEngine(inputMode: mode)
       _ = processString("siff", engine: engine)
@@ -101,7 +113,9 @@ struct TelexEngineEdgeCaseTests {
       #expect(engine.isEmpty == false)
     }
 
-    @Test("siff then f then backspace: triple escape commits then backspace returns nil", arguments: [InputMode.tl, InputMode.poj])
+    @Test(
+      "siff then f then backspace: triple escape commits then backspace returns nil",
+      arguments: [InputMode.tl, InputMode.poj])
     func siffFThenBackspace(mode: InputMode) {
       let engine = TelexEngine(inputMode: mode)
       _ = processString("sifff", engine: engine)
@@ -111,7 +125,9 @@ struct TelexEngineEdgeCaseTests {
       #expect(result == nil)
     }
 
-    @Test("Tone mark then hyphen: avf commits toned syllable and starts hyphen", arguments: [InputMode.tl, InputMode.poj])
+    @Test(
+      "Tone mark then hyphen: avf commits toned syllable and starts hyphen",
+      arguments: [InputMode.tl, InputMode.poj])
     func toneMarkThenHyphen(mode: InputMode) {
       let engine = TelexEngine(inputMode: mode)
       let results = processString("avf", engine: engine)
@@ -123,7 +139,9 @@ struct TelexEngineEdgeCaseTests {
       #expect(engine.isEmpty == false)
     }
 
-    @Test("Consonant escape then hyphen: zzf starts fresh hyphen", arguments: [InputMode.tl, InputMode.poj])
+    @Test(
+      "Consonant escape then hyphen: zzf starts fresh hyphen",
+      arguments: [InputMode.tl, InputMode.poj])
     func consonantEscapeThenHyphen(mode: InputMode) {
       let engine = TelexEngine(inputMode: mode)
       let results = processString("zzf", engine: engine)
@@ -135,7 +153,9 @@ struct TelexEngineEdgeCaseTests {
       #expect(engine.isEmpty == false)
     }
 
-    @Test("Hyphen then consonant then consonant escape: ffzz commits raw with hyphens and consonant", arguments: [InputMode.tl, InputMode.poj])
+    @Test(
+      "Hyphen then consonant then consonant escape: ffzz commits raw with hyphens and consonant",
+      arguments: [InputMode.tl, InputMode.poj])
     func hyphenThenConsonantEscape(mode: InputMode) {
       let engine = TelexEngine(inputMode: mode)
       let results = processString("ffzz", engine: engine)
@@ -148,7 +168,9 @@ struct TelexEngineEdgeCaseTests {
       #expect(engine.isEmpty == true)
     }
 
-    @Test("Hyphen key after backspace: f backspace then f restarts", arguments: [InputMode.tl, InputMode.poj])
+    @Test(
+      "Hyphen key after backspace: f backspace then f restarts",
+      arguments: [InputMode.tl, InputMode.poj])
     func hyphenAfterBackspace(mode: InputMode) {
       let engine = TelexEngine(inputMode: mode)
       _ = engine.process("f")
@@ -160,7 +182,8 @@ struct TelexEngineEdgeCaseTests {
       #expect(engine.isEmpty == false)
     }
 
-    @Test("Double hyphen backspace returns to single hyphen", arguments: [InputMode.tl, InputMode.poj])
+    @Test(
+      "Double hyphen backspace returns to single hyphen", arguments: [InputMode.tl, InputMode.poj])
     func doubleHyphenBackspace(mode: InputMode) {
       let engine = TelexEngine(inputMode: mode)
       _ = processString("ff", engine: engine)
@@ -180,7 +203,9 @@ struct TelexEngineEdgeCaseTests {
       #expect(result == nil)
     }
 
-    @Test("siff then backspace twice: single hyphen then empty", arguments: [InputMode.tl, InputMode.poj])
+    @Test(
+      "siff then backspace twice: single hyphen then empty",
+      arguments: [InputMode.tl, InputMode.poj])
     func siffBackspaceTwice(mode: InputMode) {
       let engine = TelexEngine(inputMode: mode)
       _ = processString("siff", engine: engine)
@@ -221,7 +246,9 @@ struct TelexEngineEdgeCaseTests {
   @Suite("Backspace Edge Cases")
   struct BackspaceEdgeCaseTests {
 
-    @Test("Backspace after consonant mapping clears completely", arguments: [InputMode.tl, InputMode.poj])
+    @Test(
+      "Backspace after consonant mapping clears completely",
+      arguments: [InputMode.tl, InputMode.poj])
     func backspaceAfterConsonantMappingClears(mode: InputMode) {
       let engine = TelexEngine(inputMode: mode)
       _ = engine.process("z")
@@ -231,7 +258,9 @@ struct TelexEngineEdgeCaseTests {
       #expect(engine.isEmpty == true)
     }
 
-    @Test("Backspace after consonant mapping with preceding letter: az backspace", arguments: [InputMode.tl, InputMode.poj])
+    @Test(
+      "Backspace after consonant mapping with preceding letter: az backspace",
+      arguments: [InputMode.tl, InputMode.poj])
     func backspaceAfterConsonantMappingWithPreceding(mode: InputMode) {
       let engine = TelexEngine(inputMode: mode)
       _ = processString("az", engine: engine)
@@ -241,7 +270,9 @@ struct TelexEngineEdgeCaseTests {
       #expect(engine.isEmpty == false)
     }
 
-    @Test("Backspace after POJ double vowel mapping: sann backspace", arguments: [InputMode.tl, InputMode.poj])
+    @Test(
+      "Backspace after POJ double vowel mapping: sann backspace",
+      arguments: [InputMode.tl, InputMode.poj])
     func backspaceAfterDoubleVowelMapping(mode: InputMode) {
       let engine = TelexEngine(inputMode: mode)
       _ = processString("sann", engine: engine)
@@ -255,7 +286,9 @@ struct TelexEngineEdgeCaseTests {
       #expect(engine.isEmpty == false)
     }
 
-    @Test("Backspace after tone mark: tav backspace returns to pre-tone state", arguments: [InputMode.tl, InputMode.poj])
+    @Test(
+      "Backspace after tone mark: tav backspace returns to pre-tone state",
+      arguments: [InputMode.tl, InputMode.poj])
     func backspaceAfterToneMark(mode: InputMode) {
       let engine = TelexEngine(inputMode: mode)
       _ = processString("tav", engine: engine)
@@ -265,7 +298,9 @@ struct TelexEngineEdgeCaseTests {
       #expect(engine.isEmpty == false)
     }
 
-    @Test("Backspace after tone override: avy backspace removes override", arguments: [InputMode.tl, InputMode.poj])
+    @Test(
+      "Backspace after tone override: avy backspace removes override",
+      arguments: [InputMode.tl, InputMode.poj])
     func backspaceAfterToneOverride(mode: InputMode) {
       let engine = TelexEngine(inputMode: mode)
       _ = processString("avy", engine: engine)
@@ -275,7 +310,9 @@ struct TelexEngineEdgeCaseTests {
       #expect(engine.isEmpty == false)
     }
 
-    @Test("Multiple consecutive backspaces: taiv backspace x4", arguments: [InputMode.tl, InputMode.poj])
+    @Test(
+      "Multiple consecutive backspaces: taiv backspace x4",
+      arguments: [InputMode.tl, InputMode.poj])
     func multipleConsecutiveBackspaces(mode: InputMode) {
       let engine = TelexEngine(inputMode: mode)
       _ = processString("taiv", engine: engine)
@@ -306,7 +343,9 @@ struct TelexEngineEdgeCaseTests {
       #expect(engine.isEmpty == false)
     }
 
-    @Test("Backspace after consonant mapping c clears completely", arguments: [InputMode.tl, InputMode.poj])
+    @Test(
+      "Backspace after consonant mapping c clears completely",
+      arguments: [InputMode.tl, InputMode.poj])
     func backspaceAfterCConsonantMapping(mode: InputMode) {
       let engine = TelexEngine(inputMode: mode)
       _ = engine.process("c")
@@ -316,7 +355,9 @@ struct TelexEngineEdgeCaseTests {
       #expect(engine.isEmpty == true)
     }
 
-    @Test("Backspace after complex syllable with consonant mapping and tone", arguments: [InputMode.tl, InputMode.poj])
+    @Test(
+      "Backspace after complex syllable with consonant mapping and tone",
+      arguments: [InputMode.tl, InputMode.poj])
     func backspaceAfterComplexSyllable(mode: InputMode) {
       let engine = TelexEngine(inputMode: mode)
       _ = processString("zav", engine: engine)
@@ -327,7 +368,8 @@ struct TelexEngineEdgeCaseTests {
       #expect(engine.isEmpty == false)
     }
 
-    @Test("Backspace after tone escape leaves engine empty", arguments: [InputMode.tl, InputMode.poj])
+    @Test(
+      "Backspace after tone escape leaves engine empty", arguments: [InputMode.tl, InputMode.poj])
     func backspaceAfterToneEscape(mode: InputMode) {
       let engine = TelexEngine(inputMode: mode)
       _ = processString("avv", engine: engine)
@@ -337,7 +379,9 @@ struct TelexEngineEdgeCaseTests {
       #expect(result == nil)
     }
 
-    @Test("Backspace after consonant escape leaves engine empty", arguments: [InputMode.tl, InputMode.poj])
+    @Test(
+      "Backspace after consonant escape leaves engine empty",
+      arguments: [InputMode.tl, InputMode.poj])
     func backspaceAfterConsonantEscape(mode: InputMode) {
       let engine = TelexEngine(inputMode: mode)
       _ = processString("zz", engine: engine)
@@ -347,7 +391,9 @@ struct TelexEngineEdgeCaseTests {
       #expect(result == nil)
     }
 
-    @Test("Backspace after commitAndPassthrough leaves engine empty", arguments: [InputMode.tl, InputMode.poj])
+    @Test(
+      "Backspace after commitAndPassthrough leaves engine empty",
+      arguments: [InputMode.tl, InputMode.poj])
     func backspaceAfterCommitAndPassthrough(mode: InputMode) {
       let engine = TelexEngine(inputMode: mode)
       _ = processString("a ", engine: engine)
@@ -363,7 +409,9 @@ struct TelexEngineEdgeCaseTests {
   @Suite("Tone Mark Edge Cases")
   struct ToneMarkEdgeCaseTests {
 
-    @Test("Tone override on simple vowel: avy overrides acute with grave", arguments: [InputMode.tl, InputMode.poj])
+    @Test(
+      "Tone override on simple vowel: avy overrides acute with grave",
+      arguments: [InputMode.tl, InputMode.poj])
     func toneOverrideOnSimpleVowel(mode: InputMode) {
       let engine = TelexEngine(inputMode: mode)
       let results = processString("avy", engine: engine)
@@ -390,7 +438,9 @@ struct TelexEngineEdgeCaseTests {
       #expect(results.last == .update(display: "m\u{0301}"))
     }
 
-    @Test("Tone mark on complex syllable with consonant mapping: ngv continues", arguments: [InputMode.tl, InputMode.poj])
+    @Test(
+      "Tone mark on complex syllable with consonant mapping: ngv continues",
+      arguments: [InputMode.tl, InputMode.poj])
     func toneMarkOnSyllabicNgWithConsonant(mode: InputMode) {
       let engine = TelexEngine(inputMode: mode)
       let results = processString("pngv", engine: engine)
@@ -398,7 +448,8 @@ struct TelexEngineEdgeCaseTests {
       #expect(results.last == .update(display: "pn\u{0301}g"))
     }
 
-    @Test("Tone then consonant continues composing: tavk", arguments: [InputMode.tl, InputMode.poj])
+    @Test(
+      "Tone then consonant continues composing: tavk", arguments: [InputMode.tl, InputMode.poj])
     func toneThenConsonantContinues(mode: InputMode) {
       let engine = TelexEngine(inputMode: mode)
       let results = processString("tavk", engine: engine)
@@ -439,7 +490,9 @@ struct TelexEngineEdgeCaseTests {
       #expect(results.last == .update(display: "A\u{0301}"))
     }
 
-    @Test("Tone key on consonant-only buffer preserves tone key: tv", arguments: [InputMode.tl, InputMode.poj])
+    @Test(
+      "Tone key on consonant-only buffer preserves tone key: tv",
+      arguments: [InputMode.tl, InputMode.poj])
     func toneKeyOnConsonantOnlyBuffer(mode: InputMode) {
       let engine = TelexEngine(inputMode: mode)
       let results = processString("tv", engine: engine)
@@ -498,7 +551,9 @@ struct TelexEngineEdgeCaseTests {
       #expect(engine.isEmpty == true)
     }
 
-    @Test("Mixed case tone escape does not trigger: avV overrides tone", arguments: [InputMode.tl, InputMode.poj])
+    @Test(
+      "Mixed case tone escape does not trigger: avV overrides tone",
+      arguments: [InputMode.tl, InputMode.poj])
     func mixedCaseToneEscapeDoesNotTrigger(mode: InputMode) {
       let engine = TelexEngine(inputMode: mode)
       let results = processString("avV", engine: engine)
@@ -509,7 +564,9 @@ struct TelexEngineEdgeCaseTests {
       #expect(results[2] == .update(display: "a\u{0301}"))
     }
 
-    @Test("Tone key after tone then consonant: tavkv continues composing", arguments: [InputMode.tl, InputMode.poj])
+    @Test(
+      "Tone key after tone then consonant: tavkv continues composing",
+      arguments: [InputMode.tl, InputMode.poj])
     func toneKeyAfterToneThenConsonant(mode: InputMode) {
       let engine = TelexEngine(inputMode: mode)
       let results = processString("tavkv", engine: engine)
@@ -545,7 +602,8 @@ struct TelexEngineEdgeCaseTests {
       #expect(result == nil)
     }
 
-    @Test("Mixed case zZ does NOT trigger consonant escape", arguments: [InputMode.tl, InputMode.poj])
+    @Test(
+      "Mixed case zZ does NOT trigger consonant escape", arguments: [InputMode.tl, InputMode.poj])
     func mixedCaseZDoesNotEscape(mode: InputMode) {
       let engine = TelexEngine(inputMode: mode)
       let results = processString("zZ", engine: engine)
@@ -555,7 +613,8 @@ struct TelexEngineEdgeCaseTests {
       #expect(engine.isEmpty == false)
     }
 
-    @Test("Mixed case cC does NOT trigger consonant escape", arguments: [InputMode.tl, InputMode.poj])
+    @Test(
+      "Mixed case cC does NOT trigger consonant escape", arguments: [InputMode.tl, InputMode.poj])
     func mixedCaseCDoesNotEscape(mode: InputMode) {
       let engine = TelexEngine(inputMode: mode)
       let results = processString("cC", engine: engine)
@@ -565,7 +624,8 @@ struct TelexEngineEdgeCaseTests {
       #expect(engine.isEmpty == false)
     }
 
-    @Test("Mixed case Zz does NOT trigger consonant escape", arguments: [InputMode.tl, InputMode.poj])
+    @Test(
+      "Mixed case Zz does NOT trigger consonant escape", arguments: [InputMode.tl, InputMode.poj])
     func mixedCaseUpperZDoesNotEscape(mode: InputMode) {
       let engine = TelexEngine(inputMode: mode)
       let results = processString("Zz", engine: engine)
@@ -597,7 +657,8 @@ struct TelexEngineEdgeCaseTests {
       #expect(engine.isEmpty == true)
     }
 
-    @Test("Consonant escape after word: azz commits az raw", arguments: [InputMode.tl, InputMode.poj])
+    @Test(
+      "Consonant escape after word: azz commits az raw", arguments: [InputMode.tl, InputMode.poj])
     func consonantEscapeAfterWord(mode: InputMode) {
       let engine = TelexEngine(inputMode: mode)
       let results = processString("azz", engine: engine)
@@ -606,7 +667,9 @@ struct TelexEngineEdgeCaseTests {
       #expect(engine.isEmpty == true)
     }
 
-    @Test("Consonant escape after tone: zavz continues composing then tone", arguments: [InputMode.tl, InputMode.poj])
+    @Test(
+      "Consonant escape after tone: zavz continues composing then tone",
+      arguments: [InputMode.tl, InputMode.poj])
     func consonantAfterToneMarkedSyllable(mode: InputMode) {
       let engine = TelexEngine(inputMode: mode)
       let results = processString("zavz", engine: engine)
@@ -616,7 +679,9 @@ struct TelexEngineEdgeCaseTests {
       #expect(engine.isEmpty == false)
     }
 
-    @Test("Consonant escape commits raw including preceding characters", arguments: [InputMode.tl, InputMode.poj])
+    @Test(
+      "Consonant escape commits raw including preceding characters",
+      arguments: [InputMode.tl, InputMode.poj])
     func consonantEscapeCommitsRawWithPreceding(mode: InputMode) {
       let engine = TelexEngine(inputMode: mode)
       let results = processString("sizz", engine: engine)
@@ -698,7 +763,9 @@ struct TelexEngineEdgeCaseTests {
       #expect(engine.isEmpty == true)
     }
 
-    @Test("POJ double vowel backspace: oo backspace in POJ returns to single o", arguments: [InputMode.poj])
+    @Test(
+      "POJ double vowel backspace: oo backspace in POJ returns to single o",
+      arguments: [InputMode.poj])
     func doubleVowelBackspacePOJ(mode: InputMode) {
       let engine = TelexEngine(inputMode: mode)
       _ = processString("oo", engine: engine)
@@ -865,7 +932,9 @@ struct TelexEngineEdgeCaseTests {
       #expect(engine.isEmpty == true)
     }
 
-    @Test("Non-letter in empty state returns commitAndPassthrough with empty string", arguments: [InputMode.tl, InputMode.poj])
+    @Test(
+      "Non-letter in empty state returns commitAndPassthrough with empty string",
+      arguments: [InputMode.tl, InputMode.poj])
     func nonLetterInEmptyState(mode: InputMode) {
       let engine = TelexEngine(inputMode: mode)
       let result = engine.process(".")
@@ -874,7 +943,9 @@ struct TelexEngineEdgeCaseTests {
       #expect(engine.isEmpty == true)
     }
 
-    @Test("Number in empty state returns commitAndPassthrough with empty string", arguments: [InputMode.tl, InputMode.poj])
+    @Test(
+      "Number in empty state returns commitAndPassthrough with empty string",
+      arguments: [InputMode.tl, InputMode.poj])
     func numberInEmptyState(mode: InputMode) {
       let engine = TelexEngine(inputMode: mode)
       let result = engine.process("5")
@@ -896,7 +967,9 @@ struct TelexEngineEdgeCaseTests {
       #expect(result == .update(display: "a"))
     }
 
-    @Test("Composing state internal values after complex input", arguments: [InputMode.tl, InputMode.poj])
+    @Test(
+      "Composing state internal values after complex input",
+      arguments: [InputMode.tl, InputMode.poj])
     func composingStateAfterComplexInput(mode: InputMode) {
       let engine = TelexEngine(inputMode: mode)
       _ = processString("taiv", engine: engine)
@@ -909,7 +982,9 @@ struct TelexEngineEdgeCaseTests {
       }
     }
 
-    @Test("Backspace restores correct state after tone on complex syllable", arguments: [InputMode.tl, InputMode.poj])
+    @Test(
+      "Backspace restores correct state after tone on complex syllable",
+      arguments: [InputMode.tl, InputMode.poj])
     func backspaceRestoresStateAfterToneOnComplexSyllable(mode: InputMode) {
       let engine = TelexEngine(inputMode: mode)
       _ = processString("taiv", engine: engine)

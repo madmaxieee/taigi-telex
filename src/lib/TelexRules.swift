@@ -133,10 +133,8 @@ public enum TelexRules {
     var clusterStart: Int? = nil
 
     for (offset, char) in lower.enumerated().reversed() {
-      let index = lower.index(lower.startIndex, offsetBy: offset)
-
-      // Check for o͘ in POJ mode
-      if mode == .poj && lower[index...].hasPrefix(oWithDot) {
+      // Check for o͘ in POJ mode (single grapheme cluster: o + combining dot U+0358)
+      if mode == .poj && String(char) == oWithDot {
         if clusterEnd != nil {
           // We already have a vowel cluster after o͘
           // o͘ acts as a separator, process the cluster we found

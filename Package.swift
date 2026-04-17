@@ -30,5 +30,12 @@ let package = Package(
       exclude: ["lib"],
       swiftSettings: []
     ),
+    // Fuzz test executable (not run by `swift test`)
+    .executableTarget(
+      name: "FuzzTests",
+      dependencies: ["TaigiTelexLib"],
+      path: "fuzz",
+      swiftSettings: []
+    ),
   ]
 )

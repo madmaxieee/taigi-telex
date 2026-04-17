@@ -36,6 +36,10 @@ run = "xcrun swift-format format --in-place **/*.swift"
 description = "Run unit tests"
 run = "swift test"
 
+[tasks.fuzz]
+description = "Run fuzz tests (not included in `swift test`)"
+run = "swift run FuzzTests"
+
 [tasks.package]
 description = "Build and package TaigiTelex as PKG"
 run = "scripts/build_pkg.sh --universal"

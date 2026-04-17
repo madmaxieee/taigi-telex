@@ -86,8 +86,14 @@ public class TelexEngine {
         return .update(display: newDisplay)
 
       default:
+        // trailingCount >= 2: escape the first hyphen key, commit it
         let dropped = currentRaw.dropLast(trailingCount - 1)
-        guard let lastChar = dropped.last else { return .commit("") }
+        guard let lastChar = dropped.last else {
+          // Should not happen: trailingCount is derived from currentRaw,
+          // so dropped always has at least 1 character.
+          state = .empty
+          return .commit("")
+        }
         let rawToCommit = String(dropped.dropLast())
         let hyphenKey = String(lastChar)
         let display = TelexRules.transform(rawToCommit, mode: inputMode) + hyphenKey

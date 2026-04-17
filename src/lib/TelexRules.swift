@@ -113,7 +113,7 @@ public enum TelexRules {
         applied.insert(contentsOf: tonePos.mark, at: segment.index(after: targetIndex))
         result += applied
       } else {
-        result += segment
+        result += segment + String(input[tonePos.index])
       }
 
       prevToneEnd = input.index(after: tonePos.index)

@@ -175,6 +175,14 @@ struct TelexRulesTests {
       #expect(TelexRules.applyToneMark("mv", mode: mode) == "ḿ")
       #expect(TelexRules.applyToneMark("ngv", mode: mode) == "ńg")
     }
+
+    @Test(
+      "Tone key preserved when no valid tone position", arguments: [InputMode.tl, InputMode.poj])
+    func toneKeyPreservedWhenNoTonePosition(mode: InputMode) {
+      #expect(TelexRules.applyToneMark("bv", mode: mode) == "bv")
+      #expect(TelexRules.applyToneMark("tv", mode: mode) == "tv")
+      #expect(TelexRules.applyToneMark("xy", mode: mode) == "xy")
+    }
   }
 
   @Suite("Tone Positioning")

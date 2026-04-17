@@ -72,8 +72,7 @@ public enum TelexRules {
   }
 
   public static func applyHyphenMapping(_ input: String) -> String {
-    input.replacingOccurrences(of: "f", with: "-")
-      .replacingOccurrences(of: "F", with: "-")
+    input.map { ($0 == "f" || $0 == "F") ? "-" : String($0) }.joined()
   }
 
   public static func applyDoubleVowelMapping(_ input: String) -> String {
@@ -233,14 +232,10 @@ public enum TelexRules {
     guard input.count >= 2 else { return false }
 
     let lastTwo = String(input.suffix(2))
+    let expected = String(repeating: char, count: 2).lowercased()
 
     // Check if last two chars are the same and match the new char (nnn or ooo)
-    let expected = String(repeating: char, count: 2).lowercased()
-    if lastTwo.lowercased() == expected {
-      return true
-    }
-
-    return false
+    return lastTwo.lowercased() == expected
   }
 
   public static func isConsonantReplacementEscape(_ input: String, char: Character) -> Bool {

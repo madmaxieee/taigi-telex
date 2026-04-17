@@ -8,16 +8,13 @@ class TaigiTelexInputController: IMKInputController {
   private static let currentModeKey = "taigiTelex.currentMode"
 
   override init!(server: IMKServer!, delegate: Any!, client inputClient: Any!) {
-    NSLog("[TaigiTelex] InputController init called")
     // Read last used mode from UserDefaults, fallback to TL
     let savedModeString =
       UserDefaults.standard.string(forKey: Self.currentModeKey)
       ?? InputMode.tl.rawValue
     let initialMode = InputMode(rawValue: savedModeString) ?? .tl
     engine = TelexEngine(inputMode: initialMode)
-    NSLog("[TaigiTelex] Engine created with mode: \(engine.inputMode) (saved: \(savedModeString))")
     super.init(server: server, delegate: delegate, client: inputClient)
-    NSLog("[TaigiTelex] InputController init complete")
   }
 
   /// Called by the system when input mode changes
@@ -27,15 +24,11 @@ class TaigiTelexInputController: IMKInputController {
     }
 
     guard let newMode = InputMode(rawValue: modeId) else {
-      NSLog("[TaigiTelex] ERROR: Unknown mode ID: \(modeId)")
-      NSLog(
-        "[TaigiTelex] Valid modes: tl='\(InputMode.tl.rawValue)', poj='\(InputMode.poj.rawValue)'")
       return
     }
 
     // Only update if mode actually changed
     if engine.inputMode != newMode {
-      NSLog("[TaigiTelex] Mode changing from \(engine.inputMode) to \(newMode)")
 
       // Persist the mode change
       UserDefaults.standard.set(newMode.rawValue, forKey: Self.currentModeKey)
@@ -47,9 +40,7 @@ class TaigiTelexInputController: IMKInputController {
 
       // Create new engine with new mode
       engine = TelexEngine(inputMode: newMode)
-      NSLog("[TaigiTelex] Engine recreated with new mode: \(engine.inputMode)")
     } else {
-      NSLog("[TaigiTelex] Mode unchanged: \(newMode)")
     }
   }
 
@@ -61,7 +52,6 @@ class TaigiTelexInputController: IMKInputController {
       UserDefaults.standard.string(forKey: Self.currentModeKey)
       ?? InputMode.tl.rawValue
     if let savedMode = InputMode(rawValue: savedModeString), engine.inputMode != savedMode {
-      NSLog("[TaigiTelex] Syncing engine mode on activate: \(engine.inputMode) -> \(savedMode)")
       if !engine.isEmpty {
         commitComposition(sender)
       }

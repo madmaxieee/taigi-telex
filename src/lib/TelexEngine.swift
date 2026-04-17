@@ -5,9 +5,7 @@ public class TelexEngine {
   private(set) public var state: TelexState = .empty
 
   public init(inputMode: InputMode) {
-    NSLog("[TaigiTelex] TelexEngine init with mode: \(inputMode)")
     self.inputMode = inputMode
-    NSLog("[TaigiTelex] TelexEngine inputMode set to: \(self.inputMode)")
   }
 
   public func process(_ char: Character) -> TelexResult {

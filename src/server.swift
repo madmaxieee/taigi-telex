@@ -28,7 +28,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     AppDelegate.candidates = IMKCandidates(
       server: AppDelegate.server,
       panelType: kIMKSingleRowSteppingCandidatePanel)
-    NSLog("tried connection")
   }
 
   func applicationWillTerminate(_: Notification) {}

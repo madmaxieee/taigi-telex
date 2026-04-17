@@ -86,10 +86,10 @@ public class TelexEngine {
         return .update(display: newDisplay)
 
       default:
-        // commit the first hyphen key and the rest of the string
-        let rawAndHyphenKey = String(currentRaw.dropLast(trailingCount - 1))
-        let rawToCommit = String(rawAndHyphenKey.dropLast())
-        let hyphenKey = String(rawAndHyphenKey.last!)
+        let dropped = currentRaw.dropLast(trailingCount - 1)
+        guard let lastChar = dropped.last else { return .commit("") }
+        let rawToCommit = String(dropped.dropLast())
+        let hyphenKey = String(lastChar)
         let display = TelexRules.transform(rawToCommit, mode: inputMode) + hyphenKey
         state = .empty
         return .commit(display)

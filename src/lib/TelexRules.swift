@@ -105,6 +105,10 @@ public enum TelexRules {
     for tonePos in tonePositions {
       let segment = String(input[prevToneEnd..<tonePos.index])
 
+      // findTonePosition returns a character offset (from enumerated()),
+      // which is directly comparable to segment.count (also character count).
+      // Both operate on the same String view, so grapheme cluster boundaries
+      // are handled consistently.
       if let position = findTonePosition(segment, mode: mode),
         position < segment.count
       {

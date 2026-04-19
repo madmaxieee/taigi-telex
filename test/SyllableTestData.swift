@@ -41,11 +41,12 @@ extension SyllableTestCase {
 
   static let pojBasic: [SyllableTestCase] = [
     // Tone marks with POJ-specific vowels
-    .poj(in: "hoov", out: "hó͘"),
-    .poj(in: "pay", out: "pà"),
-    .poj(in: "kaud", out: "kâu"),
-    .poj(in: "ciunnw", out: "chhiūⁿ"),
+    .poj(in: "hoov", out: "hó͘"),
+    .poj(in: "pay", out: "pà"),
+    .poj(in: "kaud", out: "kâu"),
+    .poj(in: "ciunnw", out: "chhiūⁿ"),
     .poj(in: "lokx", out: "lo̍k"),
+    .poj(in: "zangq", out: "chăng"),
     // Nasalization
     .poj(in: "sann", out: "saⁿ"),
     // Consonant replacements

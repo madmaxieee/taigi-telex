@@ -1,7 +1,7 @@
 import Foundation
 
 public enum TelexRules {
-  public static let toneMarkByToneKey: [Character: String] = [
+  public static let toneMarkByToneKeyTL: [Character: String] = [
     "v": "\u{0301}",  // combining acute (2nd tone)
     "y": "\u{0300}",  // combining grave (3rd tone)
     "d": "\u{0302}",  // combining circumflex (5th tone)
@@ -14,6 +14,21 @@ public enum TelexRules {
     "W": "\u{0304}",
     "X": "\u{030D}",
     "Q": "\u{030B}",
+  ]
+
+  public static let toneMarkByToneKeyPOJ: [Character: String] = [
+    "v": "\u{0301}",  // combining acute (2nd tone)
+    "y": "\u{0300}",  // combining grave (3rd tone)
+    "d": "\u{0302}",  // combining circumflex (5th tone)
+    "w": "\u{0304}",  // combining macron (7th tone)
+    "x": "\u{030D}",  // combining vertical line (8th tone)
+    "q": "\u{0306}",  // combining breve (9th tone)
+    "V": "\u{0301}",
+    "Y": "\u{0300}",
+    "D": "\u{0302}",
+    "W": "\u{0304}",
+    "X": "\u{030D}",
+    "Q": "\u{0306}",
   ]
 
   public static let consonantMapTL: [Character: String] = [
@@ -86,8 +101,9 @@ public enum TelexRules {
   public static func applyToneMark(_ input: String, mode: InputMode) -> String {
     var tonePositions: [(index: String.Index, mark: String)] = []
 
+    let toneMarkMap = mode == .tl ? toneMarkByToneKeyTL : toneMarkByToneKeyPOJ
     for (offset, char) in input.enumerated() {
-      if let toneMark = toneMarkByToneKey[char] {
+      if let toneMark = toneMarkMap[char] {
         tonePositions.append(
           (index: input.index(input.startIndex, offsetBy: offset), mark: toneMark))
       }

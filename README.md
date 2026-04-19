@@ -65,16 +65,16 @@ To type literal `nn` or `oo`, press the key **three times** (e.g., `nnn` → `nn
 
 ### Tone Marks
 
-Add tone marks by typing the corresponding key at the end of a syllable (same in both modes):
+Add tone marks by typing the corresponding key at the end of a syllable (same in both modes, except 9th tone):
 
-| Key | Tone | Example    |
-| --- | ---- | ---------- |
-| `v` | 2nd  | `av` → `á` |
-| `y` | 3rd  | `ay` → `à` |
-| `d` | 5th  | `ad` → `â` |
-| `w` | 7th  | `aw` → `ā` |
-| `x` | 8th  | `ax` → `a̍` |
-| `q` | 9th  | `aq` → `a̋` |
+| Key | Tone | Example (TL) | Example (POJ) |
+| --- | ---- | ------------ | ------------- |
+| `v` | 2nd  | `av` → `á`   | `av` → `á`    |
+| `y` | 3rd  | `ay` → `à`   | `ay` → `à`    |
+| `d` | 5th  | `ad` → `â`   | `ad` → `â`    |
+| `w` | 7th  | `aw` → `ā`   | `aw` → `ā`    |
+| `x` | 8th  | `ax` → `a̍`   | `ax` → `a̍`    |
+| `q` | 9th  | `aq` → `a̋`   | `aq` → `ă`    |
 
 ### Examples
 

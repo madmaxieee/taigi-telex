@@ -147,12 +147,16 @@ struct TelexRulesTests {
   struct ApplyToneMarkTests {
     @Test("Simple tone marks", arguments: [InputMode.tl, InputMode.poj])
     func toneMarks(mode: InputMode) {
-      #expect(TelexRules.applyToneMark("av", mode: mode) == "á")  // 2nd tone
-      #expect(TelexRules.applyToneMark("ay", mode: mode) == "à")  // 3rd tone
-      #expect(TelexRules.applyToneMark("ad", mode: mode) == "â")  // 5th tone
-      #expect(TelexRules.applyToneMark("aw", mode: mode) == "ā")  // 7th tone
+      #expect(TelexRules.applyToneMark("av", mode: mode) == "á")  // 2nd tone
+      #expect(TelexRules.applyToneMark("ay", mode: mode) == "à")  // 3rd tone
+      #expect(TelexRules.applyToneMark("ad", mode: mode) == "â")  // 5th tone
+      #expect(TelexRules.applyToneMark("aw", mode: mode) == "ā")  // 7th tone
       #expect(TelexRules.applyToneMark("ax", mode: mode) == "a̍")  // 8th tone
-      #expect(TelexRules.applyToneMark("aq", mode: mode) == "a̋")  // 9th tone
+      if mode == .tl {
+        #expect(TelexRules.applyToneMark("aq", mode: mode) == "a̋")  // 9th tone (TL: double acute)
+      } else {
+        #expect(TelexRules.applyToneMark("aq", mode: mode) == "ă")  // 9th tone (POJ: breve)
+      }
     }
 
     @Test("Uppercase tone marks", arguments: [InputMode.tl, InputMode.poj])

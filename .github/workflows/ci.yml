@@ -31,12 +31,14 @@ jobs:
       - name: Prepare nightly build artifact
         if: ${{ github.ref == 'refs/heads/main' }}
         run: |
-          VERSION=$(cat VERSION)
-          DATE=$(date +%Y%m%d)
-          SHORT_SHA=$(git rev-parse --short HEAD)
-          NEW_NAME="TaigiTelex-${VERSION}-nightly-${DATE}-${SHORT_SHA}.pkg"
-          mv build/TaigiTelex-*.pkg "build/${NEW_NAME}"
-          echo "Renamed package to: ${NEW_NAME}"
+          mv build/TaigiTelex-*.pkg "build/TaigiTelex-nightly.pkg"
+          echo "Renamed package to: TaigiTelex-nightly.pkg"
+
+      - name: Delete existing nightly release
+        if: ${{ github.ref == 'refs/heads/main' }}
+        run: gh release delete nightly --yes || true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Move nightly tag to latest commit
         if: ${{ github.ref == 'refs/heads/main' }}

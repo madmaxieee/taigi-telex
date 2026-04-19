@@ -53,4 +53,13 @@ extension SyllableTestCase {
     .poj(in: "z", out: "ch"),
     .poj(in: "c", out: "chh"),
   ]
+
+  static let pojExtra: [SyllableTestCase] = [
+    .poj(in: "goav", out: "góa"),
+    .poj(in: "goanv", out: "goán"),
+    .poj(in: "boew", out: "bōe"),
+    .poj(in: "khoanny", out: "khòaⁿ"),
+    .poj(in: "poehx", out: "poe̍h"),
+    .poj(in: "Goatx", out: "Goa̍t"),
+  ]
 }

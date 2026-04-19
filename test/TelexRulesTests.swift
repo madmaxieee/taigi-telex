@@ -219,24 +219,48 @@ struct TelexRulesTests {
 
     @Suite("POJ Mode Exceptions")
     struct POJExceptionsTests {
-      @Test("eo -> mark on e")
-      func eoMarksOnE() {
-        #expect(TelexRules.findTonePosition("eo", mode: .poj) == 0)
-        #expect(TelexRules.findTonePosition("heo", mode: .poj) == 1)
+      @Test("oai → mark on a")
+      func oaiMarksOnA() {
+        #expect(TelexRules.findTonePosition("oai", mode: .poj) == 1)
+        #expect(TelexRules.findTonePosition("koai", mode: .poj) == 2)
       }
 
-      @Test("oe -> mark on o")
-      func oeMarksOnO() {
-        #expect(TelexRules.findTonePosition("oe", mode: .poj) == 0)
-        #expect(TelexRules.findTonePosition("hoe", mode: .poj) == 1)
+      @Test("oan → mark on a")
+      func oanMarksOnA() {
+        #expect(TelexRules.findTonePosition("oan", mode: .poj) == 1)
+        #expect(TelexRules.findTonePosition("loan", mode: .poj) == 2)
+        #expect(TelexRules.findTonePosition("oant", mode: .poj) == 1)
       }
 
-      @Test("Case insensitivity for exceptions")
-      func caseInsensitivity() {
-        #expect(TelexRules.findTonePosition("EO", mode: .poj) == 0)
-        #expect(TelexRules.findTonePosition("Eo", mode: .poj) == 0)
-        #expect(TelexRules.findTonePosition("eO", mode: .poj) == 0)
-        #expect(TelexRules.findTonePosition("OE", mode: .poj) == 0)
+      @Test("oat → mark on a")
+      func oatMarksOnA() {
+        #expect(TelexRules.findTonePosition("oat", mode: .poj) == 1)
+        #expect(TelexRules.findTonePosition("coat", mode: .poj) == 2)
+      }
+
+      @Test("oah → mark on a")
+      func oahMarksOnA() {
+        #expect(TelexRules.findTonePosition("oah", mode: .poj) == 1)
+        #expect(TelexRules.findTonePosition("toah", mode: .poj) == 2)
+      }
+
+      @Test("oann → oaⁿ, mark on o")
+      func oannMarksOnO() {
+        #expect(TelexRules.findTonePosition("oaⁿ", mode: .poj) == 0)
+        #expect(TelexRules.findTonePosition("loaⁿ", mode: .poj) == 1)
+      }
+
+      @Test("oang → mark on o")
+      func oangMarksOnO() {
+        #expect(TelexRules.findTonePosition("oang", mode: .poj) == 0)
+        #expect(TelexRules.findTonePosition("toang", mode: .poj) == 1)
+        #expect(TelexRules.findTonePosition("oangt", mode: .poj) == 0)
+      }
+
+      @Test("oeh → mark on e")
+      func oehMarksOnE() {
+        #expect(TelexRules.findTonePosition("oeh", mode: .poj) == 1)
+        #expect(TelexRules.findTonePosition("toeh", mode: .poj) == 2)
       }
     }
 
@@ -255,22 +279,21 @@ struct TelexRulesTests {
         #expect(TelexRules.findTonePosition("io", mode: .tl) == 1)
       }
 
-      @Test("POJ priority: o͘ > a > e > o > u > i")
+      @Test("POJ priority: o > e > a > u > i")
       func pojVowelPriority() {
-        // o͘ has highest priority when in the same cluster
-        #expect(TelexRules.findTonePosition("o͘", mode: .poj) == 0)
-        #expect(TelexRules.findTonePosition("ao͘", mode: .poj) == 1)
+        #expect(TelexRules.findTonePosition("oa", mode: .poj) == 0)  // o > a
+        #expect(TelexRules.findTonePosition("ao", mode: .poj) == 1)  // o > a
+        #expect(TelexRules.findTonePosition("oe", mode: .poj) == 0)  // o > e
+        #expect(TelexRules.findTonePosition("eo", mode: .poj) == 1)  // o > e
 
-        // all the usual vowels follow the same priority as TL
+        // all the usual vowels
         #expect(TelexRules.findTonePosition("ai", mode: .poj) == 0)
         #expect(TelexRules.findTonePosition("ia", mode: .poj) == 1)
         #expect(TelexRules.findTonePosition("au", mode: .poj) == 0)
-        #expect(TelexRules.findTonePosition("ua", mode: .poj) == 1)
-        #expect(TelexRules.findTonePosition("uai", mode: .poj) == 1)
-
-        // there is no "ue" in POJ
+        #expect(TelexRules.findTonePosition("oa", mode: .poj) == 0)
 
         #expect(TelexRules.findTonePosition("io", mode: .poj) == 1)
+        #expect(TelexRules.findTonePosition("ie", mode: .poj) == 1)  // e > i
       }
     }
 
@@ -574,12 +597,20 @@ struct TelexRulesTests {
   struct BasicSyllableTestCases {
     @Test("TL mode syllable transformations", arguments: SyllableTestCase.tlBasic)
     func tlSyllableTransformations(testCase: SyllableTestCase) {
-      #expect(TelexRules.transform(testCase.input, mode: .tl) == testCase.output)
+      #expect(TelexRules.transform(testCase.input, mode: testCase.mode) == testCase.output)
     }
 
     @Test("POJ mode syllable transformations", arguments: SyllableTestCase.pojBasic)
     func pojSyllableTransformations(testCase: SyllableTestCase) {
-      #expect(TelexRules.transform(testCase.input, mode: .poj) == testCase.output)
+      #expect(TelexRules.transform(testCase.input, mode: testCase.mode) == testCase.output)
+    }
+  }
+
+  @Suite("Extra Syllable Test Cases")
+  struct POJSyllableTransformTestCases {
+    @Test("POJ mode syllable transformations", arguments: SyllableTestCase.pojExtra)
+    func pojSyllableTransformations(testCase: SyllableTestCase) {
+      #expect(TelexRules.transform(testCase.input, mode: testCase.mode) == testCase.output)
     }
   }
 }

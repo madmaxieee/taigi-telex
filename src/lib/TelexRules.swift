@@ -57,7 +57,7 @@ public enum TelexRules {
   ]
 
   public static let vowelPriorityTL = ["a", "e", "o", "u", "i"]
-  public static let vowelPriorityPOJ = ["o\u{0358}", "a", "e", "o", "u", "i"]  // o͘ has highest priority
+  public static let vowelPriorityPOJ = ["o", "e", "a", "u", "i"]
 
   public static func transform(_ input: String, mode: InputMode) -> String {
     var result = input
@@ -184,8 +184,12 @@ public enum TelexRules {
       let endIdx = lower.index(lower.startIndex, offsetBy: end)
       let clusterText = String(lower[startIdx...endIdx])
 
+      // Extract everything after the cluster (suffix)
+      let suffixStartIdx = lower.index(after: endIdx)
+      let suffix = suffixStartIdx < lower.endIndex ? String(lower[suffixStartIdx...]) : ""
+
       // Check for exception cases first
-      if let exceptionPos = tonePositionForException(cluster: clusterText, mode: mode, start: start)
+      if let exceptionPos = tonePositionForException(cluster: clusterText, suffix: suffix, mode: mode, start: start)
       {
         return exceptionPos
       }
@@ -297,8 +301,8 @@ public enum TelexRules {
     return lastChar == char
   }
 
-  /// Check for tone position exception cases based on cluster content and input mode.
-  private static func tonePositionForException(cluster: String, mode: InputMode, start: Int) -> Int?
+  /// Check for tone position exception cases based on cluster content, following suffix, and input mode.
+  private static func tonePositionForException(cluster: String, suffix: String, mode: InputMode, start: Int) -> Int?
   {
     switch mode {
     case .tl:
@@ -309,11 +313,21 @@ public enum TelexRules {
         return start + 1
       }
     case .poj:
-      if cluster == "eo" {
+      // oai (full vowel cluster) → mark on a
+      if cluster == "oai" {
+        return start + 1
+      }
+      // oang → mark on o (not a, unlike oan/oat/oah)
+      if cluster == "oa" && suffix.hasPrefix("ng") {
         return start
       }
-      if cluster == "oe" {
-        return start
+      // oan, oat, oah → mark on a
+      if cluster == "oa" && (suffix.hasPrefix("n") || suffix.hasPrefix("t") || suffix.hasPrefix("h")) {
+        return start + 1
+      }
+      // oeh → mark on e
+      if cluster == "oe" && suffix.hasPrefix("h") {
+        return start + 1
       }
     }
     return nil

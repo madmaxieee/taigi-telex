@@ -8,26 +8,33 @@ Tâi-gí Telex is a Taiwanese input method with Telex-style tone keys for macOS.
 
 ### Download & Install
 
-[Download Latest](https://github.com/madmaxieee/taigi-telex/releases/tag/latest)
+[Download Latest Release](https://github.com/madmaxieee/taigi-telex/releases/latest) — **Recommended for most users.**
 
-1. Download the `TaigiTelex-x.x.x.pkg` file
-2. Double-click the PKG file to run the installer
-3. Click through the welcome screen and install
+> **Nightly builds** are pre-release versions with the latest changes. They may be less stable. [Download here](https://github.com/madmaxieee/taigi-telex/releases/tag/nightly) if you want to test new features.
 
-**Important - Unsigned Package Warning:**
+#### Step 1: Install the Package
 
-This package is not signed with an Apple Developer certificate. On first install, you may see a warning saying the package "cannot be opened because it is from an unidentified developer." To proceed:
+1. Download the `TaigiTelex-x.x.x.pkg` file from the link above
+2. Double-click the downloaded `.pkg` file to start the installer
+3. Follow the prompts to complete installation
+
+**If you see "cannot be opened" or "unidentified developer":**
+
+This package isn't signed with an Apple Developer certificate, which is normal for open-source projects. To allow it:
 
 1. Open **System Settings** → **Privacy & Security**
-2. Scroll down to the "Security" section
+2. Scroll to the **Security** section
 3. Click **Open Anyway** next to the message about TaigiTelex
-4. Confirm when prompted
+4. Enter your password if prompted, then confirm
 
-After installation:
+#### Step 2: Add the Input Method
 
-- Go to **System Settings** → **Keyboard** → **Input Sources** (Edit)
-- Click the **+** button and select **Tâi-gí Telex** from **Chinese, Traditional**
-- If the input method doesn't appear, log out and log back in
+1. Go to **System Settings** → **Keyboard** → **Input Sources**
+2. Click the **Edit…** button (or **+** on older macOS versions)
+3. Search for **Tâi-gí Telex** under **Chinese, Traditional** and add it
+4. Select it from the input menu in your menu bar to start typing
+
+> **Tip:** If Tâi-gí Telex doesn't appear in the list, log out of your Mac and log back in, then try again.
 
 ### Basic Rules
 

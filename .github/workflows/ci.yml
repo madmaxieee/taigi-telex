@@ -57,6 +57,7 @@ jobs:
           name: "Nightly Build"
           token: ${{ secrets.GITHUB_TOKEN }}
           make_latest: false
+          prerelease: true
           generate_release_notes: true
           files: |
             build/TaigiTelex-*.pkg

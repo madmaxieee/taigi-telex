@@ -192,6 +192,32 @@ struct TelexRulesTests {
   @Suite("Tone Positioning")
   struct TonePositioningTests {
 
+    @Suite("Vowel Priority Rules")
+    struct PriorityRulesTests {
+      @Test("TL priority: a > e > o > u > i")
+      func tlVowelPriority() {
+        #expect(TelexRules.findTonePosition("ai", mode: .tl) == 0)
+        #expect(TelexRules.findTonePosition("ia", mode: .tl) == 1)
+        #expect(TelexRules.findTonePosition("au", mode: .tl) == 0)
+        #expect(TelexRules.findTonePosition("ua", mode: .tl) == 1)
+        #expect(TelexRules.findTonePosition("uai", mode: .tl) == 1)
+        #expect(TelexRules.findTonePosition("ue", mode: .tl) == 1)
+        #expect(TelexRules.findTonePosition("io", mode: .tl) == 1)
+      }
+
+      @Test("POJ priority: o > e > a > u > i")
+      func pojVowelPriority() {
+        #expect(TelexRules.findTonePosition("oa", mode: .poj) == 0)
+        #expect(TelexRules.findTonePosition("ao", mode: .poj) == 1)
+        #expect(TelexRules.findTonePosition("oe", mode: .poj) == 0)
+        #expect(TelexRules.findTonePosition("eo", mode: .poj) == 1)
+        #expect(TelexRules.findTonePosition("ai", mode: .poj) == 0)
+        #expect(TelexRules.findTonePosition("ia", mode: .poj) == 1)
+        #expect(TelexRules.findTonePosition("au", mode: .poj) == 0)
+        #expect(TelexRules.findTonePosition("io", mode: .poj) == 1)
+      }
+    }
+
     @Suite("TL mode exceptions")
     struct TLExceptionsTests {
       @Test("iu -> mark on u")
@@ -261,39 +287,6 @@ struct TelexRulesTests {
       func oehMarksOnE() {
         #expect(TelexRules.findTonePosition("oeh", mode: .poj) == 1)
         #expect(TelexRules.findTonePosition("toeh", mode: .poj) == 2)
-      }
-    }
-
-    @Suite("Vowel Priority Rules")
-    struct PriorityRulesTests {
-      @Test("TL priority: a > e > o > u > i")
-      func tlVowelPriority() {
-        #expect(TelexRules.findTonePosition("ai", mode: .tl) == 0)
-        #expect(TelexRules.findTonePosition("ia", mode: .tl) == 1)
-        #expect(TelexRules.findTonePosition("au", mode: .tl) == 0)
-        #expect(TelexRules.findTonePosition("ua", mode: .tl) == 1)
-        #expect(TelexRules.findTonePosition("uai", mode: .tl) == 1)
-
-        #expect(TelexRules.findTonePosition("ue", mode: .tl) == 1)
-
-        #expect(TelexRules.findTonePosition("io", mode: .tl) == 1)
-      }
-
-      @Test("POJ priority: o > e > a > u > i")
-      func pojVowelPriority() {
-        #expect(TelexRules.findTonePosition("oa", mode: .poj) == 0)  // o > a
-        #expect(TelexRules.findTonePosition("ao", mode: .poj) == 1)  // o > a
-        #expect(TelexRules.findTonePosition("oe", mode: .poj) == 0)  // o > e
-        #expect(TelexRules.findTonePosition("eo", mode: .poj) == 1)  // o > e
-
-        // all the usual vowels
-        #expect(TelexRules.findTonePosition("ai", mode: .poj) == 0)
-        #expect(TelexRules.findTonePosition("ia", mode: .poj) == 1)
-        #expect(TelexRules.findTonePosition("au", mode: .poj) == 0)
-        #expect(TelexRules.findTonePosition("oa", mode: .poj) == 0)
-
-        #expect(TelexRules.findTonePosition("io", mode: .poj) == 1)
-        #expect(TelexRules.findTonePosition("ie", mode: .poj) == 1)  // e > i
       }
     }
 

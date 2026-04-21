@@ -10,7 +10,7 @@ PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 BUILD_DIR="${PROJECT_DIR}/build"
 PKG_DIR="${PROJECT_DIR}/pkg"
 WORK_DIR="${BUILD_DIR}/pkg_work"
-VERSION=$(cat "${PROJECT_DIR}/VERSION")
+VERSION="${VERSION:-$(cat "${PROJECT_DIR}/VERSION")}"
 
 BUNDLE_ID="com.kahiok.inputmethod.TaigiTelex"
 APP_NAME="TaigiTelex"

@@ -49,6 +49,19 @@ jobs:
           git tag nightly
           git push origin nightly --force
 
+      - name: Generate release notes
+        if: ${{ github.ref == 'refs/heads/main' }}
+        run: |
+          {
+            awk '
+              $0 == "## [Unreleased]" {flag=1; print; next}
+              /^## \[/ {flag=0}
+              flag
+            ' CHANGELOG.md
+            echo ""
+            cat INSTALLATION_GUIDE.md
+          } > ${{ github.workspace }}/release_notes.md
+
       - name: Release
         if: ${{ github.ref == 'refs/heads/main' }}
         uses: softprops/action-gh-release@v2
@@ -58,7 +71,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           make_latest: false
           prerelease: true
-          generate_release_notes: true
+          body_path: ${{ github.workspace }}/release_notes.md
           files: |
             build/TaigiTelex-*.pkg
 
@@ -85,11 +98,23 @@ jobs:
         run: |
           scripts/build_pkg.sh --universal
 
+      - name: Generate release notes
+        run: |
+          {
+            awk -v ver="## [$VERSION]" '
+              index($0, ver) == 1 {flag=1; print; next}
+              /^## \[/ {flag=0}
+              flag
+            ' CHANGELOG.md
+            echo ""
+            cat INSTALLATION_GUIDE.md
+          } > ${{ github.workspace }}/release_notes.md
+
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           make_latest: true
-          generate_release_notes: true
+          body_path: ${{ github.workspace }}/release_notes.md
           files: |
             build/TaigiTelex-*.pkg
